@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const express = require("express");
+const cors = require("cors");
+const authRoutes = require("./routes/authRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -18,3 +21,5 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+app.use("/api/auth", authRoutes);
