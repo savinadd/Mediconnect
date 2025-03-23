@@ -1,0 +1,113 @@
+/* Main container */
+.symptoms-container {
+    padding: 40px 10%;
+    background-color: #f9f9f9;
+}
+
+/* Header */
+.symptoms-container h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #222;
+}
+
+.symptoms-container p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Log Symptom Button */
+.log-button {
+    background-color: #6c63ff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.log-button:hover {
+    background-color: #564fd8;
+}
+
+/* Symptom Cards */
+.symptom-cards {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.symptom-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    width: 280px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.symptom-header {
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+    color: white;
+    font-weight: bold;
+}
+
+.symptom-details {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.no-symptoms {
+    color: #888;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+/* Symptom History Table */
+h2 {
+    margin-top: 40px;
+}
+
+.symptom-history {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.symptom-history th, .symptom-history td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.symptom-history th {
+    background-color: #f4f4f4;
+}
+
+/* Status colors */
+.status {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+}
+
+.status.resolved {
+    background-color: #34D399;
+    color: white;
+}
+
+.status.ongoing {
+    background-color: #FACC15;
+    color: white;
+}

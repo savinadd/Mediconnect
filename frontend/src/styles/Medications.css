@@ -1,0 +1,109 @@
+/* Main container */
+.prescriptions-container {
+    padding: 40px 10%;
+    background-color: #f9f9f9;
+}
+
+/* Headers */
+.prescriptions-container h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #222;
+}
+
+.prescriptions-container h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 30px;
+    color: #333;
+}
+
+/* Active Prescriptions Cards */
+.active-prescriptions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.prescription-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #34D399;
+}
+
+.prescription-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prescription-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #222;
+}
+
+.prescription-status {
+    background-color: #D1FAE5;
+    color: #065F46;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.doctor {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}
+
+.prescription-details {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #444;
+}
+
+.no-prescriptions {
+    color: #888;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* Prescription History Table */
+.prescription-history {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.prescription-history th, .prescription-history td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.prescription-history th {
+    background-color: #f4f4f4;
+}
+
+/* Status colors */
+.status {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+}
+
+.status.completed {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
