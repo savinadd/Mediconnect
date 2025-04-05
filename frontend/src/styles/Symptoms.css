@@ -1,10 +1,8 @@
-/* Main container */
 .symptoms-container {
     padding: 40px 10%;
     background-color: #f9f9f9;
 }
 
-/* Header */
 .symptoms-container h1 {
     font-size: 28px;
     font-weight: bold;
@@ -17,7 +15,6 @@
     margin-bottom: 20px;
 }
 
-/* Log Symptom Button */
 .log-button {
     background-color: #6c63ff;
     color: white;
@@ -33,7 +30,6 @@
     background-color: #564fd8;
 }
 
-/* Symptom Cards */
 .symptom-cards {
     display: flex;
     gap: 15px;
@@ -67,7 +63,6 @@
     margin-top: 20px;
 }
 
-/* Symptom History Table */
 h2 {
     margin-top: 40px;
 }
@@ -92,7 +87,6 @@ h2 {
     background-color: #f4f4f4;
 }
 
-/* Status colors */
 .status {
     padding: 6px 12px;
     border-radius: 15px;
@@ -111,3 +105,93 @@ h2 {
     background-color: #FACC15;
     color: white;
 }
+.log-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .form-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  input, textarea, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    flex: 1;
+    font-size: 1rem;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #45a049;
+  }
+  
+  .severity-select.mild {
+    background-color: #d4fcd4;
+  }
+  
+  .severity-select.moderate {
+    background-color: #fff6cc;
+  }
+  
+  .severity-select.severe {
+    background-color: #ffe1e1;
+  }
+  
+  .severity-select.critical {
+    background-color: #ffcccc;
+  }
+  .severity-tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #333;
+    display: inline-block;
+    text-align: center;
+  }
+  
+  .severity-tag.mild {
+    background-color: #d4fcd4;
+    color: #256029;
+  }
+  
+  .severity-tag.moderate {
+    background-color: #fff6cc;
+    color: #665c00;
+  }
+  
+  .severity-tag.severe {
+    background-color: #ffd6d6;
+    color: #991f1f;
+  }
+  
+  .severity-tag.critical {
+    background-color: #ffb3b3;
+    color: #800000;
+  }
+  

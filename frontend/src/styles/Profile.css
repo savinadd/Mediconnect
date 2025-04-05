@@ -4,7 +4,6 @@
     min-height: 100vh;
 }
 
-/* Header */
 .profile-header {
     display: flex;
     align-items: center;
@@ -40,7 +39,6 @@
     margin-top: 5px;
 }
 
-/* Grid Layout */
 .profile-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -59,7 +57,6 @@
     font-size: 18px;
 }
 
-/* Allergy Tags */
 .tags {
     margin-top: 5px;
 }
@@ -74,7 +71,6 @@
     margin-right: 8px;
 }
 
-/* Activity List */
 .activity-list {
     list-style: none;
     padding-left: 0;
@@ -113,7 +109,6 @@
     margin-left: auto;
 }
 
-/* Footer */
 .profile-footer {
     margin-top: 50px;
     padding-top: 30px;

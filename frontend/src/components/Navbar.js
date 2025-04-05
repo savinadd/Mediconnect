@@ -6,49 +6,55 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-    const { isLoggedIn, logout } = useContext(AuthContext);
-    const navigate = useNavigate();
+  const { isLoggedIn, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const role = localStorage.getItem("userRole");
 
-    return (
-        <nav className="navbar">
-            <div className="navbar-container">
-                {/* Logo */}
-                <div className="navbar-logo">
-                    <img src={logo} alt="MediConnect Logo" className="logo-img" />
-                    <span>MediConnect</span>
-                </div>
+  return (
+    <nav className="navbar">
+      <div className="navbar-container">
 
-                {/* Navigation Links */}
-                <ul className="nav-links">
-                    {isLoggedIn ? (
-                        <>
-                            <li><Link to="/symptoms">Symptoms</Link></li>
-                            <li><Link to="/prescriptions">Medications</Link></li>
-                            <li><Link to="/profile">Profile</Link></li>
-                            <li><button
-                                onClick={() => {
-                                    logout();
-                                    navigate("/");
-                                }}
-                                className="logout-btn"
-                            >
-                                Logout
-                            </button></li>
+        <div className="navbar-logo">
+          <img src={logo} alt="MediConnect Logo" className="logo-img" />
+          <span>MediConnect</span>
+        </div>
 
-                        </>
-                    ) : (
-                        <>
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="/about">About</Link></li>
-                        </>
-                    )}
-                </ul>
+        <ul className="nav-links">
+          {isLoggedIn ? (
+            <>
+              {role === "patient" && (
+                <li><Link to="/symptoms">Symptoms</Link></li>
+              )}
+              {(role === "patient" || role === "doctor") && (
+                <li><Link to="/prescriptions">Medications</Link></li>
+              )}
+              <li><Link to="/profile">Profile</Link></li>
+              {role === "admin" && (
+                <li><Link to="/admin">Admin</Link></li>
+              )}
+              <button
+                onClick={() => {
+                  logout();
+                  navigate("/");
+                }}
+                className="logout-btn"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/about">About</Link></li>
+            </>
+          )}
+        </ul>
 
-                {/* Sign Up Button */}
-                {!isLoggedIn && <Link to="/register" className="signup-button">Sign Up</Link>}
-            </div>
-        </nav>
-    );
+
+        {!isLoggedIn && <Link to="/register" className="signup-button">Sign Up</Link>}
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;

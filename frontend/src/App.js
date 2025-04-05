@@ -10,11 +10,8 @@ import Medications from "./pages/Medications";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
-
-function ProtectedRoute({ children }) {
-  const { isLoggedIn } = React.useContext(AuthContext);
-  return isLoggedIn ? children : <Navigate to="/login" />;
-}
+import SetupProfile from "./pages/SetupProfile";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -26,7 +23,6 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Protected Routes */}
           <Route path="/symptoms" element={
             <ProtectedRoute><Symptoms /></ProtectedRoute>
           } />
@@ -37,6 +33,7 @@ function App() {
             <ProtectedRoute><Profile /></ProtectedRoute>
           } />
           <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+          <Route path="/setup-profile" element={<ProtectedRoute><SetupProfile /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

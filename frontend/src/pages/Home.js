@@ -1,11 +1,11 @@
 import React from "react";
-import "../styles/Home.css"; // Import CSS file
-import doctorAppImage from "../assets/homepage.jpg"; // Ensure your image is placed in src/assets/
+import "../styles/Home.css"; 
+import doctorAppImage from "../assets/homepage.jpg"; 
 
 const HealthPriority = () => {
   return (
     <div className="home-container">
-      {/* Left Section - Text & Buttons */}
+
       <div className="home-text">
         <h1>Your Health, Our Priority</h1>
         <p>
@@ -18,7 +18,6 @@ const HealthPriority = () => {
         </div>
       </div>
 
-      {/* Right Section - Image */}
       <div className="home-image">
         <img src={doctorAppImage} alt="Doctor image" />
       </div>

@@ -3,31 +3,38 @@ import "../styles/Login.css";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
+import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // from AuthProvider
+  const { isLoggedIn , login} = useContext(AuthContext);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/profile");
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
   
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-  
+      
       const data = await response.json();
   
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        login(); // mark as logged in globally
-        navigate("/symptoms"); // go to Symptoms page
+        localStorage.setItem("userRole", data.user.role);
+        login();
+        navigate("/setup-profile"); 
       } else {
         setError(data.message);
       }
@@ -67,7 +74,13 @@ const Login = () => {
           <a href="#">Forgot Password?</a>
         </div>
 
-        <button className="register-button">Register New Account</button>
+        <a
+  href={`/register`}
+  className="register-button"
+>
+  Register New Account
+</a>
+
       </div>
     </div>
   );

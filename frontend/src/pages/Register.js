@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import "../styles/Login.css"; // Reusing the login styles
+import "../styles/Login.css"; 
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext"; 
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("patient"); // Default role
+  const [role, setRole] = useState("patient"); 
   const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState({}); // Store validation errors
+  const [errors, setErrors] = useState({}); 
 
   const validateForm = () => {
     let validationErrors = {};
@@ -25,34 +28,35 @@ const Register = () => {
     }
 
     setErrors(validationErrors);
-    return Object.keys(validationErrors).length === 0; // Returns true if no errors
+    return Object.keys(validationErrors).length === 0; 
   };
 
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+  
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) return; // Prevent submission if validation fails
-
+  
+    if (!validateForm()) return;
+  
     try {
-      const response = await fetch("http://localhost:3000/api/auth/register", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, role }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        setMessage("Registration successful! Redirecting to login...");
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 2000);
 
-        // Clear inputs after successful registration
-        setEmail("");
-        setPassword("");
-        setRole("patient");
-        setErrors({});
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userRole", data.user.role);
+        localStorage.setItem("userId", data.user.id);
+  
+        login(); 
+  
+        navigate("/setup-profile"); 
       } else {
         setMessage(data.message);
       }
@@ -61,7 +65,6 @@ const Register = () => {
       setMessage("Server error. Please try again.");
     }
   };
-
   return (
     <div className="login-container">
       <div className="login-box">
