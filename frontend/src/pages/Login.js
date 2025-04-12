@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -27,14 +28,18 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      
+  
       const data = await response.json();
   
       if (response.ok) {
+        const decoded = jwtDecode(data.token);
+  
         localStorage.setItem("token", data.token);
-        localStorage.setItem("userRole", data.user.role);
+        localStorage.setItem("userId", decoded.userId);
+        localStorage.setItem("userRole", decoded.role);
+  
         login();
-        navigate("/setup-profile"); 
+        navigate("/setup-profile");
       } else {
         setError(data.message);
       }

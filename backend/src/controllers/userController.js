@@ -5,37 +5,70 @@ const getUserProfile = async (req, res) => {
   const role = req.user.role;
 
   try {
-    if (role === "patient") {
-        const user = await db.query("SELECT email FROM users WHERE id = $1", [userId]);
+    const userResult = await db.query(`SELECT email FROM users WHERE id = $1`, [userId]);
+    const email = userResult.rows[0]?.email;
 
-      const patient = await db.query("SELECT * FROM patients WHERE user_id = $1", [userId]);
-
-      if (patient.rows.length === 0) return res.status(404).json({ message: "Patient not found" });
-
-      return res.json({
-        ...patient.rows[0],
-        email: user.rows[0].email,
-        profile_picture: user.rows[0].profile_picture,
-      });
-    } else if (role === "doctor") {
-        const user = await db.query("SELECT email FROM users WHERE id = $1", [userId]);
-
-      const doctor = await db.query("SELECT * FROM doctors WHERE user_id = $1", [userId]);
-
-      if (doctor.rows.length === 0) return res.status(404).json({ message: "Doctor not found" });
-
-      return res.json({
-        ...doctor.rows[0],
-        email: user.rows[0].email,
-        profile_picture: user.rows[0].profile_picture,
-      });
-    } else {
-      return res.status(403).json({ message: "Admins do not have a profile view" });
+    if (!email) {
+      return res.status(404).json({ message: "User email not found." });
     }
+
+    if (role === "patient") {
+      const result = await db.query(`
+        SELECT first_name, last_name, birth_date, phone, address,
+               blood_type, height, weight, allergies, government_id
+        FROM patients WHERE user_id = $1
+      `, [userId]);
+
+      if (result.rows.length === 0) {
+        return res.status(200).json({ profileCompleted: false, role, email });
+      }
+
+      const patient = result.rows[0];
+      return res.json({ ...patient, email, role, profileCompleted: true });
+    }
+
+    if (role === "doctor") {
+      const result = await db.query(`
+        SELECT first_name, last_name, phone, address,
+               specialization, license_number
+        FROM doctors WHERE user_id = $1
+      `, [userId]);
+
+      if (result.rows.length === 0) {
+        return res.status(200).json({ profileCompleted: false, role, email });
+      }
+
+      const doctor = result.rows[0];
+      return res.json({ ...doctor, email, role, profileCompleted: true });
+    }
+
+    return res.status(400).json({ message: "Invalid role" });
+
   } catch (err) {
-    console.error("Fetch Profile Error:", err);
+    console.error("Get User Profile Error:", err);
+    res.status(500).json({ message: "Server error while fetching profile" });
+  }
+};
+
+const getAllDoctors = async (req, res) => {
+  try {
+    const result = await db.query("SELECT id, first_name, last_name FROM doctors");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Fetch Doctors Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = { getUserProfile };
+const getDoctorId = async (req, res) => {
+  const result = await db.query("SELECT id FROM doctors WHERE user_id = $1", [req.user.userId]);
+  res.json({ doctorId: result.rows[0]?.id });
+};
+
+const getPatientId = async (req, res) => {
+  const result = await db.query("SELECT id FROM patients WHERE user_id = $1", [req.user.userId]);
+  res.json({ patientId: result.rows[0]?.id });
+};
+
+
+module.exports = { getUserProfile , getAllDoctors, getDoctorId, getPatientId};

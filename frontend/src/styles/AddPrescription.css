@@ -1,0 +1,46 @@
+.add-prescription-container {
+    padding: 2rem;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .add-prescription-form input {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .suggestions-dropdown {
+    list-style: none;
+    padding: 0;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    background: white;
+    margin: 0 0 1rem 0;
+  }
+  
+  .suggestions-dropdown li {
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .suggestions-dropdown li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .form-message {
+    color: green;
+    margin-bottom: 1rem;
+  }
+  

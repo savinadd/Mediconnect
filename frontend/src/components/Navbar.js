@@ -23,7 +23,15 @@ const Navbar = () => {
           {isLoggedIn ? (
             <>
               {role === "patient" && (
-                <li><Link to="/symptoms">Symptoms</Link></li>
+                <>
+                  <li><Link to="/symptoms">Symptoms</Link></li>
+                  <li><Link to="/chat">Chat</Link></li>
+                </>
+              )}
+              {role === "doctor" && (
+                <>
+                  <li><Link to="/doctor-chat">Chat</Link></li>
+                </>
               )}
               {(role === "patient" || role === "doctor") && (
                 <li><Link to="/prescriptions">Medications</Link></li>
@@ -49,7 +57,6 @@ const Navbar = () => {
             </>
           )}
         </ul>
-
 
         {!isLoggedIn && <Link to="/register" className="signup-button">Sign Up</Link>}
       </div>

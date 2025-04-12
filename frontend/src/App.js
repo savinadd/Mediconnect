@@ -12,6 +12,8 @@ import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import SetupProfile from "./pages/SetupProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ChatTest from "./pages/Chat";
+import DoctorChat from "./pages/DoctorChat";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
           } />
           <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
           <Route path="/setup-profile" element={<ProtectedRoute><SetupProfile /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><ChatTest /></ProtectedRoute>} />
+          <Route path="/doctor-chat" element={<ProtectedRoute><DoctorChat /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
