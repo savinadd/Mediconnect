@@ -2,47 +2,51 @@ import React, { useEffect, useState } from "react";
 import "../styles/Profile.css";
 import { Link } from "react-router-dom";
 import defaultImage from "../assets/defaultImage.jpg";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const Profile = () => {
-  const [profileData, setProfileData] = useState(null);
-  const [role, setRole] = useState("");
-  const [activities, setActivities] = useState([]);
+  const { userRole: role, isLoggedIn } = useContext(AuthContext);
+const [profileData, setProfileData] = useState(null);
+const [activities, setActivities] = useState([]);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-      const userRole = localStorage.getItem("userRole");
-      setRole(userRole);
+  
 
-      try {
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (res.ok) setProfileData(data);
-        else console.error("Error fetching profile:", data.message);
-      } catch (err) {
-        console.error("Error:", err);
-      }
-    };
+useEffect(() => {
+  if (!isLoggedIn) return;
 
-    const fetchActivity = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/activity/recent`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (res.ok) setActivities(data);
-        else console.error("Error fetching activity:", data.message);
-      } catch (err) {
-        console.error("Error:", err);
-      }
-    };
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, {
+        credentials: "include"
+      });
+      const data = await res.json();
+      console.log("AuthContext role at render:", role);
 
-    fetchProfile();
-    fetchActivity();
-  }, []);
+      if (res.ok) setProfileData(data);
+      else console.error("Error fetching profile:", data.message);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+
+  const fetchActivity = async () => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/activity/recent`, {
+        credentials: "include"
+      });
+      const data = await res.json();
+      if (res.ok) setActivities(data);
+      else console.error("Error fetching activity:", data.message);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+
+  fetchProfile();
+  fetchActivity();
+}, [isLoggedIn]);
+
 
   if (!profileData) return <div>Loading...</div>;
 
@@ -85,7 +89,13 @@ const Profile = () => {
         <div className="card">
           <h3>Personal Information</h3>
           <p><strong>Full Name:</strong> {first_name} {last_name}</p>
-          {role === "patient" && <p><strong>Date of Birth:</strong> {birth_date}</p>}
+          {role === "patient" && (
+  <p>
+    <strong>Date of Birth:</strong>{" "}
+    {birth_date ? new Date(birth_date).toLocaleDateString() : "N/A"}
+  </p>
+)}
+
           <p><strong>Email:</strong> {email}</p>
           <p><strong>Phone:</strong> {phone}</p>
           <p><strong>Address:</strong> {address}</p>
@@ -94,7 +104,7 @@ const Profile = () => {
         {role === "patient" && (
           <div className="card">
             <h3>Medical Information</h3>
-            <p><strong>Blood Type:</strong> {blood_type}</p>
+            <p><strong>Blood Type:</strong> {blood_type || "Unknown"}</p>
             <p><strong>Height:</strong> {height} cm</p>
             <p><strong>Weight:</strong> {weight} kg</p>
             <p><strong>Allergies:</strong></p>

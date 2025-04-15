@@ -18,16 +18,15 @@ const Symptoms = () => {
 
   const handleSymptomSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
 
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/symptoms/log`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData),
+        credentials: "include",
+        body: JSON.stringify(formData)
       });
 
       const data = await res.json();
@@ -44,15 +43,13 @@ const Symptoms = () => {
   };
 
   const fetchSymptomHistory = async () => {
-    const token = localStorage.getItem("token");
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/symptoms/history`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include"
       });
+
       const data = await res.json();
-      if (res.ok) {
-        setHistory(data);
-      }
+      if (res.ok) setHistory(data);
     } catch (err) {
       console.error("Error fetching symptom history:", err);
     }
@@ -68,35 +65,54 @@ const Symptoms = () => {
       <p>Monitor and log your symptoms to share with healthcare professionals</p>
 
       <form className="log-form" onSubmit={handleSymptomSubmit}>
-  <div className="form-group">
-    <input name="name" placeholder="Symptom name" value={formData.name} onChange={handleInputChange} required />
-    <input name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} />
-  </div>
+        <div className="form-group">
+          <input
+            name="name"
+            placeholder="Symptom name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            name="description"
+            placeholder="Description"
+            value={formData.description}
+            onChange={handleInputChange}
+          />
+        </div>
 
-  <div className="form-group">
-    <select
-      name="severity"
-      value={formData.severity}
-      onChange={handleInputChange}
-      className={`severity-select ${formData.severity.toLowerCase()}`}
-      required
-    >
-      <option value="">Select Severity</option>
-      <option value="Mild">Mild</option>
-      <option value="Moderate">Moderate</option>
-      <option value="Severe">Severe</option>
-      <option value="Critical">Critical</option>
-    </select>
+        <div className="form-group">
+          <select
+            name="severity"
+            value={formData.severity}
+            onChange={handleInputChange}
+            className={`severity-select ${formData.severity.toLowerCase()}`}
+            required
+          >
+            <option value="">Select Severity</option>
+            <option value="Mild">Mild</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Severe">Severe</option>
+            <option value="Critical">Critical</option>
+          </select>
 
-    <input name="duration" placeholder="Duration (e.g. 2 hours)" value={formData.duration} onChange={handleInputChange} />
-  </div>
+          <input
+            name="duration"
+            placeholder="Duration (e.g. 2 hours)"
+            value={formData.duration}
+            onChange={handleInputChange}
+          />
+        </div>
 
-  <textarea name="notes" placeholder="Notes" value={formData.notes} onChange={handleInputChange} />
+        <textarea
+          name="notes"
+          placeholder="Notes"
+          value={formData.notes}
+          onChange={handleInputChange}
+        />
 
-  <button type="submit" className="submit-button">Submit Symptom</button>
-</form>
-
-
+        <button type="submit" className="submit-button">Submit Symptom</button>
+      </form>
 
       <h2>Symptom History</h2>
       {history.length > 0 ? (
@@ -116,11 +132,10 @@ const Symptoms = () => {
                 <td>{new Date(entry.logged_at).toLocaleString()}</td>
                 <td>{entry.symptom_name}</td>
                 <td>
-  <span className={`severity-tag ${entry.severity?.toLowerCase()}`}>
-    {entry.severity}
-  </span>
-</td>
-
+                  <span className={`severity-tag ${entry.severity?.toLowerCase()}`}>
+                    {entry.severity}
+                  </span>
+                </td>
                 <td>{entry.duration}</td>
                 <td>{entry.notes}</td>
               </tr>

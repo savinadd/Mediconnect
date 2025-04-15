@@ -1,13 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { z } from "zod";
 import "../styles/EditProfile.css";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+const bloodTypes = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−"];
+
+const baseSchema = z.object({
+  name: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().min(1, "Phone is required"),
+  address: z.string().min(1, "Address is required"),
+});
+
+const patientSchema = baseSchema.extend({
+  birth_date: z.string().min(1, "Birth date is required"),
+  bloodType: z.string().min(1, "Blood type is required"),
+  height: z.string().min(1, "Height is required"),
+  weight: z.string().min(1, "Weight is required"),
+  allergies: z.string().min(1, "Allergies are required"),
+  government_id: z.string().min(1, "Government ID is required")
+});
+
+const doctorSchema = baseSchema.extend({
+  specialization: z.string().optional(),
+  license_number: z.string().optional()
+});
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState("");
+  const { userRole: role } = useContext(AuthContext);
+  const [validationErrors, setValidationErrors] = useState([]);
   const [profileData, setProfileData] = useState({
     name: "",
-    dob: "",
+    birth_date: "",
     email: "",
     phone: "",
     address: "",
@@ -21,126 +47,127 @@ const EditProfile = () => {
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-      const userRole = localStorage.getItem("userRole");
-      setRole(userRole);
+    if (!role) return;
 
-      try {
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, {
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => {
+        setProfileData({
+          name: `${data.first_name} ${data.last_name}`,
+          birth_date: data.birth_date?.split("T")[0] || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          address: data.address || "",
+          bloodType: data.blood_type || "",
+          height: data.height || "",
+          weight: data.weight || "",
+          allergies: data.allergies || "",
+          specialization: data.specialization || "",
+          license_number: data.license_number || "",
+          government_id: data.government_id || ""
         });
-        const data = await res.json();
+      });
+  }, [role]);
 
-        if (res.ok) {
-          setProfileData({
-            name: `${data.first_name} ${data.last_name}`,
-            dob: data.birth_date ? data.birth_date.split("T")[0] : "",
-            email: data.email || "",
-            phone: data.phone || "",
-            address: data.address || "",
-            bloodType: data.blood_type || "",
-            height: data.height || "",
-            weight: data.weight || "",
-            allergies: data.allergies || "",
-            specialization: data.specialization || "",
-            license_number: data.license_number || "",
-            government_id: data.government_id || ""
-          });
-        } else {
-          console.error("Error fetching profile:", data.message);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  const handleChange = (e) => {
+  const handleChange = e => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+    setValidationErrors([]);
+
+    const schema = role === "patient" ? patientSchema : doctorSchema;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile/edit`, {
+      schema.parse(profileData);
+
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile/edit`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(profileData),
+        credentials: "include",
+        body: JSON.stringify(profileData)
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("Profile saved successfully!");
-        setTimeout(() => {
-          navigate("/profile");
-        }, 1000);
+      const data = await res.json();
+      if (res.ok) {
+        alert("Profile saved!");
+        navigate("/profile");
       } else {
-        alert(data.message || "Error saving profile");
+        setValidationErrors(data.errors || [{ msg: data.message }]);
       }
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      alert("Server error. Try again later.");
+    } catch (err) {
+      if (err.errors) {
+        setValidationErrors(err.errors.map(e => ({ msg: e.message })));
+      } else {
+        setValidationErrors([{ msg: "Something went wrong" }]);
+      }
     }
   };
 
   return (
     <div className="edit-profile-container">
       <h1>Edit Profile</h1>
+      {validationErrors.length > 0 && (
+        <div className="error-box">
+          <ul>
+            {validationErrors.map((e, i) => <li key={i}>{e.msg}</li>)}
+          </ul>
+        </div>
+      )}
       <form className="edit-profile-form" onSubmit={handleSubmit}>
         <div className="form-section">
           <h3>Personal Information</h3>
-          <label>Full Name</label>
+          <label>Full Name *</label>
           <input name="name" value={profileData.name} onChange={handleChange} />
 
           {role === "patient" && (
             <>
-              <label>Date of Birth</label>
-              <input name="dob" type="date" value={profileData.dob} onChange={handleChange} />
+              <label>Date of Birth *</label>
+              <input type="date" name="birth_date" value={profileData.birth_date} onChange={handleChange} />
 
-              <label>Government ID</label>
+              <label>Government ID *</label>
               <input name="government_id" value={profileData.government_id} readOnly />
             </>
           )}
 
-          <label>Email</label>
-          <input name="email" type="email" value={profileData.email} readOnly />
+          <label>Email *</label>
+          <input type="email" name="email" value={profileData.email} readOnly />
 
-          <label>Phone</label>
+          <label>Phone *</label>
           <input name="phone" value={profileData.phone} onChange={handleChange} />
 
-          <label>{role === "doctor" ? "Hospital Address" : "Address"}</label>
+          <label>{role === "doctor" ? "Hospital Address *" : "Address *"}</label>
           <input name="address" value={profileData.address} onChange={handleChange} />
         </div>
 
         {role === "patient" && (
           <div className="form-section">
             <h3>Medical Information</h3>
-            <label>Blood Type</label>
-            <input name="bloodType" value={profileData.bloodType} onChange={handleChange} />
+            <label>Blood Type *</label>
+            <select name="bloodType" value={profileData.bloodType} onChange={handleChange}>
+              <option value="">Select</option>
+              {bloodTypes.map(bt => <option key={bt} value={bt}>{bt}</option>)}
+            </select>
 
-            <label>Height (cm)</label>
+            <label>Height (cm) *</label>
             <input name="height" value={profileData.height} onChange={handleChange} />
 
-            <label>Weight (kg)</label>
+            <label>Weight (kg) *</label>
             <input name="weight" value={profileData.weight} onChange={handleChange} />
 
-            <label>Allergies (comma-separated)</label>
+            <label>Allergies *</label>
             <input name="allergies" value={profileData.allergies} onChange={handleChange} />
           </div>
         )}
 
         {role === "doctor" && (
           <div className="form-section">
-            <h3>Professional Information</h3>
+            <h3>Professional Info</h3>
             <label>Specialization</label>
             <input name="specialization" value={profileData.specialization} onChange={handleChange} />
 

@@ -62,7 +62,6 @@
     background-color: #45a049;
   }
   
-  /* Drug search styling */
   .drug-search-group {
     position: relative;
     display: flex;
@@ -93,7 +92,6 @@
     background-color: #2563eb;
   }
   
-  /* Dropdown */
   .drug-suggestions {
     position: absolute;
     top: 100%;
@@ -123,12 +121,12 @@
     background-color: #e0f2fe;
     color: #0369a1;
   }
-  
-  /* Prescription cards */
+
   .active-prescriptions {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
+    justify-content: center;
     margin-top: 20px;
   }
   
@@ -139,8 +137,11 @@
     width: 280px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-left: 5px solid #34d399;
+    transition: transform 0.2s ease;
   }
-  
+  .prescription-card:hover {
+    transform: translateY(-3px);
+  }
   .prescription-header {
     display: flex;
     justify-content: space-between;
@@ -180,7 +181,6 @@
     margin-top: 20px;
   }
   
-  /* Table styling */
   .prescription-history {
     width: 100%;
     border-collapse: collapse;
@@ -219,10 +219,87 @@
     background-color: #fee2e2;
     color: #991b1b;
   }
-  
-  
-  
-  /* Responsive tweaks */
+
+.end-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.end-button:hover {
+  background-color: #d9363e;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #c3e6cb;
+  font-weight: 500;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #f5c6cb;
+  font-weight: 500;
+}
+.popup-alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.6s ease-in-out;
+  animation: fadeInPopup 0.3s ease-out forwards;
+}
+
+.popup-alert.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 2px solid #34d399;
+}
+
+.popup-alert.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #fca5a5;
+}
+
+.popup-alert.fade-out {
+  opacity: 0;
+}
+
+@keyframes fadeInPopup {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -55%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
   @media (max-width: 768px) {
     .active-prescriptions {
       flex-direction: column;

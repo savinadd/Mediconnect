@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { io } from 'socket.io-client';
-import "../styles/Chat.css"
+import "../styles/Chat.css";
+import { AuthContext } from "../context/AuthContext";
 
 const socket = io('http://localhost:3001');
 
@@ -10,66 +11,102 @@ const generateRoomId = (userA, userB) => {
 };
 
 const Chat = () => {
+  const { userId: patientUserId } = useContext(AuthContext);
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [unreadCounts, setUnreadCounts] = useState({});
   const bottomRef = useRef(null);
 
-  const patientUserId = localStorage.getItem("userId");
-
   useEffect(() => {
+    if (!patientUserId) return;
+
     const fetchDoctors = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/doctors`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (Array.isArray(data)) setDoctors(data);
+      try {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/doctors`, {
+          credentials: "include"
+        });
+        const data = await res.json();
+        const filtered = data.filter(d => Number(d.user_id) !== Number(patientUserId));
+        setDoctors(filtered);
+      } catch (err) {
+        console.error("Failed to fetch doctors:", err);
+      }
     };
+
     fetchDoctors();
-  }, []);
+  }, [patientUserId]);
 
   useEffect(() => {
-    if (!selectedDoctor) return;
+    if (!patientUserId) return;
+
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/unread?userId=${patientUserId}`, {
+          credentials: "include"
+        });
+        const data = await res.json();
+        if (data && typeof data === "object") {
+          setUnreadCounts(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch unread counts:", err);
+      }
+    };
+
+    fetchUnread();
+  }, [patientUserId]);
+
+  useEffect(() => {
+    if (!selectedDoctor || !patientUserId) return;
+
     const roomId = generateRoomId(patientUserId, selectedDoctor.user_id);
-    socket.emit("join-room", roomId);
+    socket.emit("join-room", roomId, Number(patientUserId));
+
+    setUnreadCounts(prev => ({
+      ...prev,
+      [roomId]: 0
+    }));
 
     const fetchHistory = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/history/room/${roomId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      console.log("Fetched messages:", data);
-      setMessages(data);
+      try {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/history/room/${roomId}`, {
+          credentials: "include"
+        });
+        const data = await res.json();
+        setMessages(data);
+      } catch (err) {
+        console.error("Failed to fetch chat history:", err);
+      }
     };
 
     fetchHistory();
 
     socket.on("receive-message", (data) => {
-      setMessages((prev) => [...prev, data]);
+      if (data.roomId === roomId) {
+        setMessages(prev => [...prev, data]);
+      }
     });
 
     return () => socket.off("receive-message");
-  }, [selectedDoctor]);
+  }, [selectedDoctor, patientUserId]);
 
   const sendMessage = () => {
-    if (message.trim() && selectedDoctor) {
-      const doctorUserId = selectedDoctor.user_id;
-      const roomId = generateRoomId(patientUserId, doctorUserId);
+    if (!message.trim() || !selectedDoctor || !patientUserId) return;
 
-      socket.emit("send-message", {
-        roomId,
-        message,
-        senderRole: "patient",
-        senderId: patientUserId,
-        receiverId: doctorUserId
-      });
+    const doctorUserId = selectedDoctor.user_id;
+    const roomId = generateRoomId(patientUserId, doctorUserId);
 
-     
-      setMessage("");
-    }
+    socket.emit("send-message", {
+      roomId,
+      message,
+      senderRole: "patient",
+      senderId: patientUserId,
+      receiverId: doctorUserId
+    });
+
+    setMessage("");
   };
 
   useEffect(() => {
@@ -95,6 +132,8 @@ const Chat = () => {
           {doctors.map((d) => (
             <option key={`doctor-${d.user_id}`} value={d.user_id}>
               {d.doctor_name}
+              {unreadCounts[generateRoomId(patientUserId, d.user_id)] > 0 &&
+                ` (${unreadCounts[generateRoomId(patientUserId, d.user_id)]})`}
             </option>
           ))}
         </select>
@@ -103,20 +142,19 @@ const Chat = () => {
       {selectedDoctor && (
         <>
           <div className="chat-box">
-          {messages.map((msg, i) => {
-  const currentUserId = localStorage.getItem("userId");
-  const isSender = String(msg.sender_id) === currentUserId;
-  const roleClass = isSender ? "sent" : "received";
+            {messages.map((msg, i) => {
+              const isSender = String(msg.sender_id) === String(patientUserId);
+              const roleClass = isSender ? "sent" : "received";
 
-  return (
-    <div key={`msg-${msg.timestamp || i}-${i}`} className={`chat-message-wrapper ${roleClass}`}>
-      <div className={`chat-bubble ${roleClass}`}>
-        <div className="chat-sender">{msg.sender_role}</div>
-        <div>{msg.message}</div>
-      </div>
-    </div>
-  );
-})}
+              return (
+                <div key={`msg-${msg.timestamp || i}-${i}`} className={`chat-message-wrapper ${roleClass}`}>
+                  <div className={`chat-bubble ${roleClass}`}>
+                    <div className="chat-sender">{msg.sender_role}</div>
+                    <div>{msg.message}</div>
+                  </div>
+                </div>
+              );
+            })}
             <div ref={bottomRef} />
           </div>
 

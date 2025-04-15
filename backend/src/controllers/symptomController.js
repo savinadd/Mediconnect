@@ -1,7 +1,13 @@
 const db = require("../db");
 const { logActivity } = require("./activityLogController");
+const { validationResult } = require("express-validator");
 
 const addPatientSymptom = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const userId = req.user.userId;
   const role = req.user.role;
   const {
@@ -16,10 +22,6 @@ const addPatientSymptom = async (req, res) => {
   const finalSymptomName = symptomName || name;
 
   try {
-    if (!finalSymptomName || !description) {
-      return res.status(400).json({ message: "Symptom name and description are required." });
-    }
-
     const patientResult = await db.query("SELECT id FROM patients WHERE user_id = $1", [userId]);
     const patient = patientResult.rows[0];
     if (!patient) {
@@ -41,11 +43,16 @@ const addPatientSymptom = async (req, res) => {
     await db.query(`
       INSERT INTO patient_symptoms (patient_id, symptom_id, severity, duration, notes)
       VALUES ($1, $2, $3, $4, $5)
-    `, [patient.id, symptomId, severity, duration, notes]);
+    `, [
+      patient.id,
+      symptomId,
+      severity || null,
+      duration || null,
+      notes || null
+    ]);
 
     await logActivity(userId, role, `Logged symptom: ${finalSymptomName}`);
     res.status(201).json({ message: "Symptom logged successfully" });
-
   } catch (err) {
     console.error("Add Symptom Error:", err);
     if (!res.headersSent) {

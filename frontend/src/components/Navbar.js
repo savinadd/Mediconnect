@@ -1,19 +1,16 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/Navbar.css";
 import logo from "../assets/logo.png";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, userRole: role, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const role = localStorage.getItem("userRole");
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-
         <div className="navbar-logo">
           <img src={logo} alt="MediConnect Logo" className="logo-img" />
           <span>MediConnect</span>

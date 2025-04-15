@@ -1,13 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const { authenticateToken } = require("../middlewares/authMiddleware");
-const { getUserProfile } = require("../controllers/userController");
+const { getUserProfile, getDoctorId, getPatientId } = require("../controllers/userController");
 const { editUserProfile } = require("../controllers/profileEditController");
-const {getDoctorId, getPatientId} = require("../controllers/userController")
+const { body } = require("express-validator");
 
-router.get("/profile", authenticateToken, getUserProfile);
-router.put("/profile/edit", authenticateToken, editUserProfile);
-router.get("/doctor-id", authenticateToken, getDoctorId);
-router.get("/patient-id", authenticateToken, getPatientId);
+const { authorizeRoles } = require("../middlewares/roleMiddleware");
+
+router.get("/profile", authenticateToken, authorizeRoles("patient", "doctor"), getUserProfile);
+router.put("/profile/edit",
+  authenticateToken,
+  authorizeRoles("patient", "doctor"),
+  [
+    body("name").optional().trim().escape(),
+    body("email").optional().isEmail().normalizeEmail(),
+    body("phone").optional().trim().escape(),
+    body("address").optional().trim().escape()
+  ],
+  editUserProfile
+);
+router.get("/doctor-id", authenticateToken, authorizeRoles("doctor"), getDoctorId);
+router.get("/patient-id", authenticateToken, authorizeRoles("patient"), getPatientId);
+
 
 module.exports = router;

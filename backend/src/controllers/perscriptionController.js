@@ -55,6 +55,7 @@ const addPrescription = async (req, res) => {
 const endPrescription = async (req, res) => {
   const prescriptionId = req.params.id;
   try {
+   
     await db.query(`UPDATE prescriptions SET end_date = CURRENT_DATE WHERE id = $1`, [prescriptionId]);
     res.json({ message: "Prescription marked as ended" });
   } catch (err) {

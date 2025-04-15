@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import "../styles/Login.css"; 
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext"; 
+import React, { useState, useContext } from "react";
+import "../styles/Login.css";
+import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("patient"); 
+  const [role, setRole] = useState("patient");
   const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState({}); 
+  const [errors, setErrors] = useState({});
+
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const validateForm = () => {
     let validationErrors = {};
@@ -28,35 +30,27 @@ const Register = () => {
     }
 
     setErrors(validationErrors);
-    return Object.keys(validationErrors).length === 0; 
+    return Object.keys(validationErrors).length === 0;
   };
 
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
-  
   const handleRegister = async (e) => {
     e.preventDefault();
-  
+
     if (!validateForm()) return;
-  
+
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, role }),
+        credentials: "include",
+        body: JSON.stringify({ email, password, role })
       });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userRole", data.user.role);
-        localStorage.setItem("userId", data.user.id);
-  
-        login(); 
-  
-        navigate("/setup-profile"); 
+      const data = await response.json();
+
+      if (response.ok) {
+        login(data.user.id, data.user.role);
+        navigate("/setup-profile");
       } else {
         setMessage(data.message);
       }
@@ -65,14 +59,13 @@ const Register = () => {
       setMessage("Server error. Please try again.");
     }
   };
+
   return (
     <div className="login-container">
       <div className="login-box">
         <h2>Create an Account</h2>
         <p>Join MediConnect today</p>
-
         {message && <p className="message">{message}</p>}
-
         <form onSubmit={handleRegister}>
           <input
             type="email"
@@ -83,7 +76,6 @@ const Register = () => {
             required
           />
           {errors.email && <p className="error">{errors.email}</p>}
-
           <input
             type="password"
             placeholder="Password"
@@ -93,7 +85,6 @@ const Register = () => {
             required
           />
           {errors.password && <p className="error">{errors.password}</p>}
-
           <select
             className="input-field"
             value={role}
@@ -103,12 +94,8 @@ const Register = () => {
             <option value="doctor">Doctor</option>
             <option value="admin">Admin</option>
           </select>
-
-          <button type="submit" className="login-button">
-            Register
-          </button>
+          <button type="submit" className="login-button">Register</button>
         </form>
-
         <div className="login-links">
           <a href="/login">Already have an account? Log in</a>
         </div>

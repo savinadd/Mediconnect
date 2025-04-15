@@ -5,11 +5,10 @@ const getUserProfile = async (req, res) => {
   const role = req.user.role;
 
   try {
-    const userResult = await db.query(`SELECT email FROM users WHERE id = $1`, [userId]);
-    const email = userResult.rows[0]?.email;
-
-    if (!email) {
-      return res.status(404).json({ message: "User email not found." });
+    const userResult = await db.query(`SELECT id, email FROM users WHERE id = $1`, [userId]);
+    const user = userResult.rows[0];
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
 
     if (role === "patient") {
@@ -20,11 +19,10 @@ const getUserProfile = async (req, res) => {
       `, [userId]);
 
       if (result.rows.length === 0) {
-        return res.status(200).json({ profileCompleted: false, role, email });
+        return res.status(200).json({ profileCompleted: false, role, email: user.email, userId: user.id });
       }
 
-      const patient = result.rows[0];
-      return res.json({ ...patient, email, role, profileCompleted: true });
+      return res.json({ ...result.rows[0], email: user.email, role, profileCompleted: true, userId: user.id });
     }
 
     if (role === "doctor") {
@@ -35,11 +33,10 @@ const getUserProfile = async (req, res) => {
       `, [userId]);
 
       if (result.rows.length === 0) {
-        return res.status(200).json({ profileCompleted: false, role, email });
+        return res.status(200).json({ profileCompleted: false, role, email: user.email, userId: user.id });
       }
 
-      const doctor = result.rows[0];
-      return res.json({ ...doctor, email, role, profileCompleted: true });
+      return res.json({ ...result.rows[0], email: user.email, role, profileCompleted: true, userId: user.id });
     }
 
     return res.status(400).json({ message: "Invalid role" });
@@ -49,6 +46,7 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error while fetching profile" });
   }
 };
+
 
 const getAllDoctors = async (req, res) => {
   try {
@@ -61,14 +59,28 @@ const getAllDoctors = async (req, res) => {
 };
 
 const getDoctorId = async (req, res) => {
-  const result = await db.query("SELECT id FROM doctors WHERE user_id = $1", [req.user.userId]);
-  res.json({ doctorId: result.rows[0]?.id });
+  try {
+    const result = await db.query("SELECT id FROM doctors WHERE user_id = $1", [req.user.userId]);
+    res.json({ doctorId: result.rows[0]?.id });
+  } catch (err) {
+    console.error("Fetch Doctor ID Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 const getPatientId = async (req, res) => {
-  const result = await db.query("SELECT id FROM patients WHERE user_id = $1", [req.user.userId]);
-  res.json({ patientId: result.rows[0]?.id });
+  try {
+    const result = await db.query("SELECT id FROM patients WHERE user_id = $1", [req.user.userId]);
+    res.json({ patientId: result.rows[0]?.id });
+  } catch (err) {
+    console.error("Fetch Patient ID Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
-
-module.exports = { getUserProfile , getAllDoctors, getDoctorId, getPatientId};
+module.exports = {
+  getUserProfile,
+  getAllDoctors,
+  getDoctorId,
+  getPatientId
+};

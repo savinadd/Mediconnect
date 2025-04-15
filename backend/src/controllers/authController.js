@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const db = require("../db"); 
+const db = require("../db");
 
 const registerUser = async (req, res) => {
   const { email, password, role } = req.body;
@@ -24,35 +24,44 @@ const registerUser = async (req, res) => {
   }
 
   try {
-
     const existingUser = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     if (existingUser.rows.length > 0) {
       return res.status(400).json({ message: "Email already in use." });
     }
 
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
 
     const newUser = await db.query(
       "INSERT INTO users (email, password_hash, role) VALUES ($1, $2, $3) RETURNING id, email, role",
       [email, hashedPassword, role]
     );
 
-
     const token = jwt.sign(
       { userId: newUser.rows[0].id, role: newUser.rows[0].role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: process.env.JWT_EXPIRES_IN || "1d" }
     );
 
-    res.status(201).json({ message: "User registered successfully", token, user: newUser.rows[0] });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: newUser.rows[0].id,
+        role: newUser.rows[0].role
+      }
+    });
+    
   } catch (error) {
     console.error("Registration Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -75,14 +84,37 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { userId: user.rows[0].id, role: user.rows[0].role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: process.env.JWT_EXPIRES_IN || "1d" }
     );
 
-    res.json({ message: "Login successful", token, user: { id: user.rows[0].id, role: user.rows[0].role } });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.json({
+      message: "Login successful",
+      user: {
+        id: user.rows[0].id,
+        role: user.rows[0].role
+      }
+    });
+    
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = { registerUser, loginUser };
+const logoutUser = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict"
+  });
+  res.json({ message: "Logout successful" });
+};
+
+module.exports = { registerUser, loginUser, logoutUser };
