@@ -19,8 +19,13 @@ const doctorSchema = baseUserSchema.extend({
   specialization: z.string().optional(),
   license_number: z.string().optional()
 });
-
+const adminSchema = z.object({
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  phone: z.string().min(1, "Phone is required")
+});
 module.exports = {
   patientSchema,
-  doctorSchema
+  doctorSchema,
+  adminSchema
 };

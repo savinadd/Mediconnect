@@ -15,6 +15,9 @@ router.post("/login", [
   body("password").notEmpty().trim().escape()
 ], loginUser);
 
-router.post("/logout", logoutUser);
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", { sameSite: "Lax", secure: false }); //change for prod!!!
+  res.status(200).json({ message: "Logged out" });
+});
 
 module.exports = router;

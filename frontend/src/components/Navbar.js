@@ -10,12 +10,13 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="navbar-container">
-        <div className="navbar-logo">
-          <img src={logo} alt="MediConnect Logo" className="logo-img" />
-          <span>MediConnect</span>
-        </div>
-
+    <div className="navbar-container">
+      <Link to="/" className="navbar-logo">
+        <img src={logo} alt="MediConnect Logo" className="logo-img" />
+        <span>MediConnect</span>
+      </Link>
+  
+      <div className="nav-right">
         <ul className="nav-links">
           {isLoggedIn ? (
             <>
@@ -33,31 +34,36 @@ const Navbar = () => {
               {(role === "patient" || role === "doctor") && (
                 <li><Link to="/prescriptions">Medications</Link></li>
               )}
-              <li><Link to="/profile">Profile</Link></li>
               {role === "admin" && (
                 <li><Link to="/admin">Admin</Link></li>
               )}
-              <button
-                onClick={() => {
-                  logout();
-                  navigate("/");
-                }}
-                className="logout-btn"
-              >
-                Logout
-              </button>
+              <li><Link to="/profile">Profile</Link></li>
+              <li>
+                <button
+                  onClick={() => {
+                    logout();
+                    navigate("/");
+                  }}
+                  className="logout-btn"
+                >
+                  Logout
+                </button>
+              </li>
             </>
           ) : (
             <>
               <li><Link to="/">Home</Link></li>
               <li><Link to="/about">About</Link></li>
+              <li>
+                <Link to="/register" className="signup-button">Sign Up</Link>
+              </li>
             </>
           )}
         </ul>
-
-        {!isLoggedIn && <Link to="/register" className="signup-button">Sign Up</Link>}
       </div>
-    </nav>
+    </div>
+  </nav>
+  
   );
 };
 

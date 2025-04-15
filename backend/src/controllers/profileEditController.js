@@ -1,5 +1,5 @@
 const db = require("../db");
-const { patientSchema, doctorSchema } = require("../schemas/editprofileSchema");
+const { patientSchema, doctorSchema, adminSchema } = require("../schemas/editprofileSchema");
 const {logActivity} = require("./activityLogController")
 
 const editUserProfile = async (req, res) => {
@@ -7,19 +7,26 @@ const editUserProfile = async (req, res) => {
     const role = req.user.role;
     const userId = req.user.userId;
 
-    const schema = role === "patient" ? patientSchema : doctorSchema;
-    const parsed = schema.parse(req.body);
-
-    const {
-      name, phone, address,
-      birth_date, government_id, bloodType, height, weight, allergies,
-      specialization, license_number
-    } = parsed;
-
-    const [first_name, ...rest] = name.trim().split(" ");
-    const last_name = rest.join(" ");
-
+    let parsed;
     if (role === "patient") {
+      parsed = patientSchema.parse(req.body);
+    } else if (role === "doctor") {
+      parsed = doctorSchema.parse(req.body);
+    } else if (role === "admin") {
+      parsed = adminSchema.parse(req.body);
+    } else {
+      return res.status(400).json({ message: "Invalid role" });
+    }
+    
+    if (role === "patient") {
+      const {
+        name, phone, address,
+        birth_date, government_id, bloodType, height, weight, allergies
+      } = parsed;
+    
+      const [first_name, ...rest] = name.trim().split(" ");
+      const last_name = rest.join(" ");
+    
       await db.query(
         `UPDATE patients SET 
           first_name = $1, 
@@ -34,7 +41,16 @@ const editUserProfile = async (req, res) => {
         WHERE user_id = $10`,
         [first_name, last_name, birth_date, phone, address, bloodType, height, weight, allergies, userId]
       );
+    
     } else if (role === "doctor") {
+      const {
+        name, phone, address,
+        specialization, license_number
+      } = parsed;
+    
+      const [first_name, ...rest] = name.trim().split(" ");
+      const last_name = rest.join(" ");
+    
       await db.query(
         `UPDATE doctors SET 
           first_name = $1, 
@@ -46,7 +62,24 @@ const editUserProfile = async (req, res) => {
         WHERE user_id = $7`,
         [first_name, last_name, phone, address, specialization || "", license_number || "", userId]
       );
+    
+    } else if (role === "admin") {
+      const { first_name, last_name, phone } = parsed;
+    
+      const existing = await db.query("SELECT id FROM admins WHERE user_id = $1", [userId]);
+      if (existing.rows.length > 0) {
+        await db.query(`
+          UPDATE admins SET first_name = $1, last_name = $2, phone = $3
+          WHERE user_id = $4
+        `, [first_name, last_name, phone, userId]);
+      } else {
+        await db.query(`
+          INSERT INTO admins (user_id, first_name, last_name, phone)
+          VALUES ($1, $2, $3, $4)
+        `, [userId, first_name, last_name, phone]);
+      }
     }
+    
     await logActivity(userId, role, "Updated their profile");
     res.json({ message: "Profile updated successfully" });
   } catch (err) {

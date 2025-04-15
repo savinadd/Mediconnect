@@ -7,10 +7,10 @@ const { body } = require("express-validator");
 
 const { authorizeRoles } = require("../middlewares/roleMiddleware");
 
-router.get("/profile", authenticateToken, authorizeRoles("patient", "doctor"), getUserProfile);
+router.get("/profile", authenticateToken, authorizeRoles("patient", "doctor", "admin"), getUserProfile);
 router.put("/profile/edit",
   authenticateToken,
-  authorizeRoles("patient", "doctor"),
+  authorizeRoles("patient", "doctor", "admin"),
   [
     body("name").optional().trim().escape(),
     body("email").optional().isEmail().normalizeEmail(),

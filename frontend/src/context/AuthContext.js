@@ -55,12 +55,23 @@ export const AuthProvider = ({ children }) => {
     setSkipFetch(true);
   };
 
-  const logout = () => {
-    setIsLoggedIn(false);
-    setUserId(null);
-    setUserRole(null);
+  const logout = async () => {
+    try {
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    } finally {
+      setIsLoggedIn(false);
+      setUserId(null);
+      setUserRole(null);
+      setSkipFetch(true); 
+    }
   };
-
+  
+  
   return (  
     <AuthContext.Provider value={{ isLoggedIn, userId, userRole, login, logout, loading }}>
       {children}

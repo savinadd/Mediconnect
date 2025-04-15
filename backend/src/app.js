@@ -9,7 +9,7 @@ const drugRoutes = require("./routes/drugRoutes")
 const activityRoutes = require("./routes/activityRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const chatRoutes = require("./routes/chatRoutes");
-
+const adminRoutes = require("./routes/adminRoutes");
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -20,6 +20,8 @@ app.use(cors({
   
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/api/admin", adminRoutes);
 
 app.use("/api/doctors", doctorRoutes);
 app.use('/api/chat', chatRoutes);
