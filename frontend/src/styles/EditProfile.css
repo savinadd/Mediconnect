@@ -77,3 +77,27 @@ input[type="file"] {
 .save-btn:hover {
     background-color: #564fd8;
 }
+@media (max-width: 768px) {
+    .edit-profile-container {
+      padding: 20px;
+    }
+  
+    .edit-profile-form {
+      display: flex;
+      flex-direction: column;
+    }
+  
+    .form-section {
+      margin-bottom: 20px;
+    }
+  
+    .form-buttons {
+      display: flex;
+      flex-direction: column;
+    }
+  
+    .form-buttons button {
+      margin-top: 20px;
+    }
+  }
+  

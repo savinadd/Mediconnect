@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/SetupProfile.css";
 import { AuthContext } from "../context/AuthContext";
@@ -8,15 +8,16 @@ const SetupProfile = () => {
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
-    birth_date: "",
     phone: "",
     address: "",
+    birth_date: "",
     blood_type: "",
     height: "",
     weight: "",
     allergies: "",
     specialization: "",
     license_number: "",
+    government_id: "",
   });
 
   const [error, setError] = useState("");
@@ -31,7 +32,8 @@ const SetupProfile = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile/edit`, {
+      // Send the profile data to the backend for saving
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile/setup`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -59,6 +61,7 @@ const SetupProfile = () => {
         <h2>Complete Your Profile</h2>
         {error && <p className="setup-message" style={{ color: "red" }}>{error}</p>}
         <form onSubmit={handleSubmit}>
+          {/* Common Fields */}
           <input
             className="setup-input"
             type="text"
@@ -113,6 +116,7 @@ const SetupProfile = () => {
                 placeholder="Blood Type"
                 value={formData.blood_type}
                 onChange={handleChange}
+                required
               />
               <input
                 className="setup-input"
@@ -121,6 +125,7 @@ const SetupProfile = () => {
                 placeholder="Height (cm)"
                 value={formData.height}
                 onChange={handleChange}
+                required
               />
               <input
                 className="setup-input"
@@ -129,6 +134,7 @@ const SetupProfile = () => {
                 placeholder="Weight (kg)"
                 value={formData.weight}
                 onChange={handleChange}
+                required
               />
               <input
                 className="setup-input"
@@ -137,6 +143,16 @@ const SetupProfile = () => {
                 placeholder="Allergies (comma separated)"
                 value={formData.allergies}
                 onChange={handleChange}
+                required
+              />
+              <input
+                className="setup-input"
+                type="text"
+                name="government_id"
+                placeholder="Government ID"
+                value={formData.government_id}
+                onChange={handleChange}
+                required
               />
             </>
           )}

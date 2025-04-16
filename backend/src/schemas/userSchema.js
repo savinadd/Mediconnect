@@ -2,9 +2,8 @@ const { z } = require("zod");
 
 const baseUserSchema = z.object({
   name: z.string().min(1, "Full name is required"),
-  email: z.string().email("Invalid email"),
-  phone: z.string().min(6, "Phone is required"),
-  address: z.string().min(1, "Address is required")
+  phone: z.string().min(6, "Phone number is required"),
+  address: z.string().optional(),
 });
 
 const patientProfileSchema = baseUserSchema.extend({
@@ -21,7 +20,14 @@ const doctorProfileSchema = baseUserSchema.extend({
   license_number: z.string().optional()
 });
 
+const adminProfileSchema = z.object({
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  phone: z.string().min(1, "Phone is required")
+});
+
 module.exports = {
   patientProfileSchema,
-  doctorProfileSchema
+  doctorProfileSchema,
+  adminProfileSchema
 };

@@ -4,6 +4,7 @@ const { authenticateToken } = require("../middlewares/authMiddleware");
 const { getUserProfile, getDoctorId, getPatientId } = require("../controllers/userController");
 const { editUserProfile } = require("../controllers/profileEditController");
 const { body } = require("express-validator");
+const { setupUserProfile} = require("../controllers/profileSetupController")
 
 const { authorizeRoles } = require("../middlewares/roleMiddleware");
 
@@ -19,6 +20,7 @@ router.put("/profile/edit",
   ],
   editUserProfile
 );
+router.put("/profile/setup", authenticateToken, authorizeRoles("patient", "doctor", "admin"), setupUserProfile);
 router.get("/doctor-id", authenticateToken, authorizeRoles("doctor"), getDoctorId);
 router.get("/patient-id", authenticateToken, authorizeRoles("patient"), getPatientId);
 

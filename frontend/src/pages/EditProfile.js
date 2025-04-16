@@ -1,18 +1,21 @@
 import React, { useEffect, useState, useContext } from "react";
-import { z } from "zod";
-import "../styles/EditProfile.css";
 import { useNavigate } from "react-router-dom";
+import "../styles/EditProfile.css";
 import { AuthContext } from "../context/AuthContext";
+import { z } from "zod";
 
+// Define blood types for patient profiles
 const bloodTypes = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−"];
 
+// Base schema for common fields
 const baseSchema = z.object({
   name: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email"),
-  phone: z.string().min(1, "Phone is required"),
+  phone: z.string().min(6, "Phone number is required"),
   address: z.string().min(1, "Address is required"),
 });
 
+// Patient schema extends baseSchema
 const patientSchema = baseSchema.extend({
   birth_date: z.string().min(1, "Birth date is required"),
   bloodType: z.string().min(1, "Blood type is required"),
@@ -22,9 +25,17 @@ const patientSchema = baseSchema.extend({
   government_id: z.string().min(1, "Government ID is required")
 });
 
+// Doctor schema extends baseSchema
 const doctorSchema = baseSchema.extend({
   specialization: z.string().optional(),
   license_number: z.string().optional()
+});
+
+// Admin schema extends baseSchema but doesn't require medical information
+const adminSchema = baseSchema.extend({
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  phone: z.string().min(1, "Phone number is required"),
 });
 
 const EditProfile = () => {
@@ -43,9 +54,10 @@ const EditProfile = () => {
     allergies: "",
     specialization: "",
     license_number: "",
-    government_id: ""
+    government_id: "",
   });
 
+  // Fetch profile data based on the role
   useEffect(() => {
     if (!role) return;
 
@@ -56,7 +68,7 @@ const EditProfile = () => {
       .then(data => {
         setProfileData({
           name: `${data.first_name} ${data.last_name}`,
-          birth_date: data.birth_date?.split("T")[0] || "",
+          birth_date: data.birth_date || "",
           email: data.email || "",
           phone: data.phone || "",
           address: data.address || "",
@@ -71,15 +83,17 @@ const EditProfile = () => {
       });
   }, [role]);
 
-  const handleChange = e => {
+  // Handle input changes
+  const handleChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValidationErrors([]);
 
-    const schema = role === "patient" ? patientSchema : doctorSchema;
+    const schema = role === "patient" ? patientSchema : role === "doctor" ? doctorSchema : adminSchema;
 
     try {
       schema.parse(profileData);
@@ -102,7 +116,7 @@ const EditProfile = () => {
       }
     } catch (err) {
       if (err.errors) {
-        setValidationErrors(err.errors.map(e => ({ msg: e.message })));
+        setValidationErrors(err.errors.map((e) => ({ msg: e.message })));
       } else {
         setValidationErrors([{ msg: "Something went wrong" }]);
       }
