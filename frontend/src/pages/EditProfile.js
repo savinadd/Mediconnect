@@ -4,10 +4,10 @@ import "../styles/EditProfile.css";
 import { AuthContext } from "../context/AuthContext";
 import { z } from "zod";
 
-// Define blood types for patient profiles
+
 const bloodTypes = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−"];
 
-// Base schema for common fields
+
 const baseSchema = z.object({
   name: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email"),
@@ -15,7 +15,6 @@ const baseSchema = z.object({
   address: z.string().min(1, "Address is required"),
 });
 
-// Patient schema extends baseSchema
 const patientSchema = baseSchema.extend({
   birth_date: z.string().min(1, "Birth date is required"),
   bloodType: z.string().min(1, "Blood type is required"),
@@ -25,13 +24,12 @@ const patientSchema = baseSchema.extend({
   government_id: z.string().min(1, "Government ID is required")
 });
 
-// Doctor schema extends baseSchema
+
 const doctorSchema = baseSchema.extend({
   specialization: z.string().optional(),
   license_number: z.string().optional()
 });
 
-// Admin schema extends baseSchema but doesn't require medical information
 const adminSchema = baseSchema.extend({
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
@@ -57,7 +55,7 @@ const EditProfile = () => {
     government_id: "",
   });
 
-  // Fetch profile data based on the role
+
   useEffect(() => {
     if (!role) return;
 
@@ -83,12 +81,10 @@ const EditProfile = () => {
       });
   }, [role]);
 
-  // Handle input changes
   const handleChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValidationErrors([]);

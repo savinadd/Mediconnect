@@ -4,7 +4,6 @@ const { authenticateToken } = require("../middlewares/authMiddleware");
 const { setupUserProfile } = require("../controllers/profileSetupController");
 const { authorizeRoles } = require("../middlewares/roleMiddleware");
 
-
-router.put("/profile/setup", authenticateToken, authorizeRoles("patient", "doctor"), setupUserProfile);
+router.put("/profile/setup", authenticateToken, authorizeRoles("patient", "doctor", "admin"), setupUserProfile);
 
 module.exports = router;

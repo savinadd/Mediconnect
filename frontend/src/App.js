@@ -30,7 +30,7 @@ const AppRoutes = () => {
         <Route path="/prescriptions" element={<ProtectedRoute><Medications /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-        <Route path="/setup-profile" element={<ProtectedRoute><SetupProfile /></ProtectedRoute>} />
+        <Route path="/setup-profile" element={<SetupProfile />} />
         <Route path="/chat" element={<ProtectedRoute><ChatTest /></ProtectedRoute>} />
         <Route path="/doctor-chat" element={<ProtectedRoute><DoctorChat /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

@@ -1,6 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import "../styles/Login.css";
-import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -10,11 +9,10 @@ const Register = () => {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
 
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const validateForm = () => {
-    let validationErrors = {};
+    const validationErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
@@ -43,16 +41,16 @@ const Register = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ email, password, role })
+        body: JSON.stringify({ email, password, role }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        login(data.user.id, data.user.role);
+
         navigate("/setup-profile");
       } else {
-        setMessage(data.message);
+        setMessage(data.message || "Registration failed");
       }
     } catch (error) {
       console.error("Error registering user:", error);
