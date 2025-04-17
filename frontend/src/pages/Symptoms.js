@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Symptoms.css";
+import toast from "react-hot-toast";
 
 const Symptoms = () => {
   const [formData, setFormData] = useState({
@@ -31,11 +32,11 @@ const Symptoms = () => {
 
       const data = await res.json();
       if (res.ok) {
-        alert("Symptom logged!");
+        toast.success("Symptom logged!");
         setFormData({ name: "", description: "", severity: "", duration: "", notes: "" });
         fetchSymptomHistory();
       } else {
-        alert(data.message || "Error logging symptom");
+        toast.error(data.message || "Error logging symptom");
       }
     } catch (err) {
       console.error("Symptom Log Error:", err);
@@ -86,7 +87,6 @@ const Symptoms = () => {
             name="severity"
             value={formData.severity}
             onChange={handleInputChange}
-            className={`severity-select ${formData.severity.toLowerCase()}`}
             required
           >
             <option value="">Select Severity</option>
@@ -115,8 +115,10 @@ const Symptoms = () => {
       </form>
 
       <h2>Symptom History</h2>
+
+      
       {history.length > 0 ? (
-        <table className="symptom-history">
+        <table className="symptom-history-table">
           <thead>
             <tr>
               <th>Date</th>
@@ -145,6 +147,20 @@ const Symptoms = () => {
       ) : (
         <p className="no-history">No symptom history available.</p>
       )}
+
+      {history.length > 0 && history.map((entry, index) => (
+        <div className="symptom-card" key={index}>
+          <p><strong>Date:</strong> {new Date(entry.logged_at).toLocaleString()}</p>
+          <p><strong>Symptom:</strong> {entry.symptom_name}</p>
+          <p><strong>Severity:</strong>{" "}
+            <span className={`severity-tag ${entry.severity?.toLowerCase()}`}>
+              {entry.severity}
+            </span>
+          </p>
+          <p><strong>Duration:</strong> {entry.duration}</p>
+          <p><strong>Notes:</strong> {entry.notes}</p>
+        </div>
+      ))}
     </div>
   );
 };

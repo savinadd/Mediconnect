@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/SetupProfile.css";
 
+const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
 const SetupProfile = () => {
-  const { login } = useContext(AuthContext); 
+  const { login } = useContext(AuthContext);
   const [role, setRole] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -12,13 +14,14 @@ const SetupProfile = () => {
     phone: "",
     address: "",
     birth_date: "",
-    blood_type: "",
+    blood_type: "",   
     height: "",
     weight: "",
     allergies: "",
     specialization: "",
     license_number: "",
     government_id: "",
+    department: "",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -31,25 +34,25 @@ const SetupProfile = () => {
           { credentials: "include" }
         );
         if (res.ok) {
-          const data = await res.json();
-          setRole(data.role);
+          const { role } = await res.json();
+          setRole(role);
         } else {
           setError("Unable to retrieve registration details. Please log in again.");
         }
       } catch (err) {
-        console.error("Error fetching registration role:", err);
+        console.error(err);
         setError("Server error. Please try again later.");
       }
     };
     fetchRegistrationRole();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(f => ({ ...f, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile/setup`, {
@@ -58,31 +61,29 @@ const SetupProfile = () => {
         credentials: "include",
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
-
       if (res.ok) {
         login(data.user.id, data.user.role);
-
         navigate("/profile");
       } else {
         setError(data.message || "Failed to save profile");
       }
     } catch (err) {
-      console.error("Profile setup error:", err);
+      console.error(err);
       setError("Something went wrong");
     }
   };
 
+  if (!role) return <p>Loading registration details…</p>;
   return (
     <div className="setup-container">
       <div className="setup-box">
         <h2>Complete Your Profile</h2>
         {error && <p className="setup-message" style={{ color: "red" }}>{error}</p>}
-        {/* Only render the form once we have the registration role */}
+        
         {role ? (
           <form onSubmit={handleSubmit}>
-            {/* Common Fields */}
+        
             <input
               className="setup-input"
               type="text"
@@ -120,7 +121,6 @@ const SetupProfile = () => {
               required
             />
 
-            {/* Role-specific Fields */}
             {role === "patient" && (
               <>
                 <input
@@ -131,15 +131,10 @@ const SetupProfile = () => {
                   onChange={handleChange}
                   required
                 />
-                <input
-                  className="setup-input"
-                  type="text"
-                  name="blood_type"
-                  placeholder="Blood Type"
-                  value={formData.blood_type}
-                  onChange={handleChange}
-                  required
-                />
+                <select name="blood_type" value={formData.blood_type} onChange={handleChange} required>
+                  <option value="" disabled>Select Blood Type</option>
+                  {BLOOD_TYPES.map(bt => <option key={bt} value={bt}>{bt}</option>)}
+                </select>
                 <input
                   className="setup-input"
                   type="number"

@@ -12,12 +12,18 @@ const chatRoutes = require("./routes/chatRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const cookieParser = require("cookie-parser");
 const profileRoutes = require("./routes/profileSetupRoutes");
+const helmet = require("helmet");
+const hpp    = require("hpp");
 
 const app = express();
+app.use(helmet());
+app.use(hpp());
+const FRONTEND = process.env.FRONTEND_URL || "http://localhost:3000";
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true
-  }));
+  origin: FRONTEND,
+  methods: ["GET","POST","PUT","DELETE"],
+  credentials: true
+}));
   
 app.use(express.json());
 app.use(cookieParser());
@@ -25,7 +31,7 @@ app.use(cookieParser());
 app.use("/api/admin", adminRoutes);
 
 app.use("/api/user", profileRoutes);
-app.use("/api/doctors", doctorRoutes);
+
 app.use('/api/chat', chatRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/auth", authRoutes);

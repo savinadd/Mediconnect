@@ -20,11 +20,21 @@ const editUserProfile = async (req, res) => {
 
 
     if (role === "patient") {
-      const { first_name, last_name, phone, address, birth_date, government_id, bloodType, height, weight, allergies } = parsed;
-      const [first_name_split, ...rest] = first_name.split(" ");
-      const last_name_combined = rest.join(" ");
-
-      await db.query(`
+      const {
+        first_name,
+        last_name,
+        phone,
+        address,
+        birth_date,
+        government_id,
+        blood_type,
+        height,
+        weight,
+        allergies,
+      } = parsed;
+    
+      await db.query(
+        `
         UPDATE patients SET 
           first_name = $1, 
           last_name = $2, 
@@ -36,9 +46,11 @@ const editUserProfile = async (req, res) => {
           weight = $8, 
           allergies = $9 
         WHERE user_id = $10
-      `, [first_name_split, last_name_combined, birth_date, phone, address, bloodType, height, weight, allergies, userId]);
-
-    } 
+        `,
+        [first_name, last_name, birth_date, phone, address, blood_type, height, weight, allergies, userId]
+      );
+    }
+    
 
     else if (role === "doctor") {
       const { first_name, last_name, phone, address, specialization, license_number } = parsed;

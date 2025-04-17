@@ -9,7 +9,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: '*'
+    origin: process.env.FRONTEND_URL,
+    credentials: true
   }
 });
   
@@ -40,7 +41,7 @@ io.on('connection', (socket) => {
    
 
     const userRes = await db.query("SELECT * FROM users WHERE id = $1", [senderId]);
-    console.log("Sender DB info:", userRes.rows[0]);
+  
     try {
       await db.query(
        `INSERT INTO chat_messages (room_id, sender_id, receiver_id, message, sender_role, is_read)
@@ -60,7 +61,10 @@ io.on('connection', (socket) => {
       console.error('DB Insert Error:', err);
     }
   });
-
+  socket.on("typing", (data) => {
+    io.to(data.roomId).emit("typing", data);
+  });
+  
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });

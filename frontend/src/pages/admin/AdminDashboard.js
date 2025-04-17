@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/AdminDashboard.css";
 import { useNavigate } from "react-router-dom";
-
+import toast from "react-hot-toast";
 const AdminDashboard = () => {
   const [summary, setSummary] = useState({
     totalUsers: 0,
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
       });
   
       if (res.ok) {
-        alert("User deleted successfully!");
+        toast.success("User deleted successfully!");
         fetchDoctors();
         fetchPatients();
         fetchAdmins();

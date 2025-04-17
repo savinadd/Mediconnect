@@ -1,177 +1,189 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+  useCallback
+} from 'react';
 import { io } from 'socket.io-client';
 import "../styles/Chat.css";
 import { AuthContext } from "../context/AuthContext";
 
 const socket = io('http://localhost:3001');
 
-const generateRoomId = (userA, userB) => {
-  const [a, b] = [Number(userA), Number(userB)].sort((x, y) => x - y);
-  return `${a}-${b}`;
+const generateRoomId = (a, b) => {
+  const [x,y] = [Number(a),Number(b)].sort((u,v)=>u-v);
+  return `${x}-${y}`;
 };
 
 const DoctorChat = () => {
   const { userId: doctorUserId, loading } = useContext(AuthContext);
-
   const [patients, setPatients] = useState([]);
+  const [chattedPatientIds, setChattedPatientIds] = useState([]);
+  const [unreadCounts, setUnreadCounts] = useState({});
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState('');
-  const [unreadCounts, setUnreadCounts] = useState({});
+  const [draft, setDraft] = useState('');
+  const [patientTyping, setPatientTyping] = useState(false);
   const bottomRef = useRef(null);
 
-  console.log("DoctorChat rendered");
-console.log("AuthContext doctorUserId:", doctorUserId);
-console.log("AuthContext loading:", loading);
-
-  useEffect(() => {
-    if (!doctorUserId) return;
-    console.log(doctorUserId)
-    const fetchPatients = async () => {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/patients`, {
-        credentials: "include"
-      });
-      const data = await res.json();
-      if (Array.isArray(data)) setPatients(data);
-    };
-    fetchPatients();
-  }, [doctorUserId]);
-
-  useEffect(() => {
-    if (!doctorUserId) return;
-    fetchUnread();
-  }, [doctorUserId]);
-
-  const fetchUnread = async () => {
+  const fetchChatted = useCallback(async()=> {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/unread?userId=${doctorUserId}`, {
-        credentials: "include"
-      });
-      const data = await res.json();
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/chat/chatted-patients`,
+        { credentials:'include' }
+      );
+      setChattedPatientIds(await res.json());
+    } catch(e){ console.error(e) }
+  }, []);
 
-      if (data && typeof data === "object") {
-        setUnreadCounts(data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch unread counts:", err);
-    }
-  };
+  const fetchPatients = useCallback(async()=> {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/chat/patients`,
+        { credentials:'include' }
+      );
+      const data = await res.json();
+      setPatients(data.filter(p=>p.user_id!==doctorUserId));
+    } catch(e){ console.error(e) }
+  },[doctorUserId]);
+
+  const fetchUnread = useCallback(async()=> {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/chat/unread?userId=${doctorUserId}`,
+        { credentials:'include' }
+      );
+      const map = await res.json();
+      if(typeof map==='object') setUnreadCounts(map);
+    } catch(e){ console.error(e) }
+  },[doctorUserId]);
+
+  useEffect(() => { if(doctorUserId) fetchChatted(); },[doctorUserId,fetchChatted]);
+  useEffect(() => {
+    if(!doctorUserId) return;
+    fetchPatients();
+    const iv=setInterval(fetchPatients,10000);
+    return()=>clearInterval(iv);
+  },[doctorUserId,fetchPatients]);
+  useEffect(() => { if(doctorUserId) fetchUnread(); },[doctorUserId,fetchUnread]);
 
   useEffect(() => {
-    if (!selectedPatient || !doctorUserId) return;
-    const roomId = generateRoomId(doctorUserId, selectedPatient.user_id);
-    socket.emit("join-room", roomId, Number(doctorUserId));
+    if(!selectedPatient) return;
+    const room = generateRoomId(doctorUserId, selectedPatient.user_id);
+    socket.emit('join-room',room,doctorUserId);
+    setUnreadCounts(u=>({ ...u, [room]:0 }));
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/history/room/${room}`,{ credentials:'include'})
+      .then(r=>r.json()).then(setMessages).catch(console.error);
 
-    setUnreadCounts((prev) => ({
-      ...prev,
-      [roomId]: 0
-    }));
-
-    const fetchHistory = async () => {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/history/room/${roomId}`, {
-        credentials: "include"
-      });
-      const data = await res.json();
-      setMessages(data);
-    };
-
-    fetchHistory();
-
-    socket.on("receive-message", (data) => {
-      const currentRoomId = generateRoomId(doctorUserId, selectedPatient.user_id);
-      if (data.roomId === currentRoomId) {
-        setMessages((prev) => [...prev, data]);
+    socket.on('receive-message',data=>{
+      if(data.roomId===room) setMessages(ms=>[...ms,data]);
+      fetchUnread(); fetchChatted(); fetchPatients();
+    });
+    socket.on('typing',data=>{
+      if(data.roomId===room && data.senderRole==='patient'){
+        setPatientTyping(true);
+        setTimeout(()=>setPatientTyping(false),2000);
       }
-      fetchUnread();
     });
+    return()=>{ socket.off('receive-message'); socket.off('typing'); };
+  },[selectedPatient,doctorUserId,fetchUnread,fetchChatted,fetchPatients]);
 
-    return () => socket.off("receive-message");
-  }, [selectedPatient, doctorUserId]);
+  useEffect(()=>{ bottomRef.current?.scrollIntoView({behavior:'smooth'}); },[messages]);
 
-  const sendMessage = () => {
-    if (!doctorUserId || !selectedPatient) {
-      console.warn("Missing user ID or selected patient");
-      return;
-    }
-
-    const patientUserId = Number(selectedPatient.user_id);
-    const roomId = generateRoomId(doctorUserId, patientUserId);
-
-    socket.emit("send-message", {
-      roomId,
-      message,
-      senderRole: "doctor",
-      senderId: doctorUserId,
-      receiverId: patientUserId
-    });
-    setMessage("");
+  const handleTyping = ()=>{
+    if(!selectedPatient) return;
+    const room = generateRoomId(doctorUserId, selectedPatient.user_id);
+    socket.emit('typing',{ roomId:room, senderRole:'doctor' });
   };
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const sendMsg = ()=>{
+    if(!draft.trim()||!selectedPatient) return;
+    const room = generateRoomId(doctorUserId, selectedPatient.user_id);
+    socket.emit('send-message',{
+      roomId:room,
+      message:draft,
+      senderRole:'doctor',
+      senderId:doctorUserId,
+      receiverId:selectedPatient.user_id
+    });
+    setDraft('');
+  };
+
+  if(loading) return <div>Loading…</div>;
 
   return (
     <div className="chat-container">
       <h2>Doctor Chat Interface</h2>
       <div className="chat-select-wrapper">
-        <label htmlFor="patientSelect">Select Patient: </label>
+        <label htmlFor="patientSelect">Select Patient:</label>
         <select
           id="patientSelect"
-          onChange={(e) => {
-            const selectedId = Number(e.target.value);
-            if (selectedId === Number(doctorUserId)) {
-              console.warn("You cannot chat with yourself");
-              setSelectedPatient(null);
-              return;
-            }
-            const patient = patients.find(p => Number(p.user_id) === selectedId);
-            setSelectedPatient(patient || null);
-          }}
           defaultValue=""
+          onChange={e=>{
+            const p=patients.find(x=>x.user_id===+e.target.value);
+            setSelectedPatient(p||null);
+          }}
         >
           <option value="" disabled>-- Choose a patient --</option>
-          {patients.map((p) => (
-            <option key={`patient-${p.user_id}`} value={p.user_id}>
-              {p.patient_name}
-              {unreadCounts[generateRoomId(doctorUserId, p.user_id)] > 0 &&
-                ` (${unreadCounts[generateRoomId(doctorUserId, p.user_id)]})`}
-            </option>
-          ))}
+          <optgroup label="🗨️ Chatted Patients">
+            {patients.filter(p=>chattedPatientIds.includes(p.user_id))
+              .map(p=>{
+                const room=generateRoomId(doctorUserId,p.user_id);
+                return (
+                  <option key={p.user_id} value={p.user_id}>
+                    {p.patient_name}
+                    {unreadCounts[room]>0 && ` (${unreadCounts[room]})`}
+                  </option>
+                )
+              })}
+          </optgroup>
+          <optgroup label="🆕 New Patients">
+            {patients.filter(p=>!chattedPatientIds.includes(p.user_id))
+              .map(p=>(
+                <option key={p.user_id} value={p.user_id}>
+                  {p.patient_name}
+                </option>
+              ))}
+          
+            <option disabled style={{ height:'1.5em' }}></option>
+          </optgroup>
         </select>
       </div>
 
       {selectedPatient && (
         <>
+          {patientTyping && (
+            <div className="typing-indicator">
+              <em>Patient is typing…</em>
+            </div>
+          )}
           <div className="chat-box">
-            {messages.map((msg, i) => {
-              const isSender = String(msg.sender_id) === String(doctorUserId);
-              const roleClass = isSender ? "sent" : "received";
-
+            {messages.map((m,i)=> {
+              const mine=String(m.sender_id)===String(doctorUserId);
               return (
-                <div key={`msg-${msg.timestamp || i}-${i}`} className={`chat-message-wrapper ${roleClass}`}>
-                  <div className={`chat-bubble ${roleClass}`}>
-                    <div className="chat-sender">{msg.sender_role}</div>
-                    <div>{msg.message}</div>
+                <div key={i} className={`chat-message-wrapper ${mine?'sent':'received'}`}>
+                  <div className={`chat-bubble ${mine?'sent':'received'}`}>
+                    <div className="chat-sender">{m.sender_role}</div>
+                    <div>{m.message}</div>
                   </div>
                 </div>
-              );
+              )
             })}
             <div ref={bottomRef} />
           </div>
-
           <div className="chat-input-wrapper">
             <input
               type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={draft}
+              onChange={e=>{
+                setDraft(e.target.value);
+                handleTyping();
+              }}
               placeholder="Type your message..."
               className="chat-input"
             />
-            <button onClick={sendMessage} className="chat-send-button">Send</button>
+            <button onClick={sendMsg} className="chat-send-button">Send</button>
           </div>
         </>
       )}

@@ -3,7 +3,7 @@ const db = require("../db");
 const getUserProfile = async (req, res) => {
   const userId = req.user.userId;
   const role = req.user.role;
-  console.log('is this the issue')
+
   try {
     const userResult = await db.query(`SELECT id, email FROM users WHERE id = $1`, [userId]);
     const user = userResult.rows[0];
@@ -12,7 +12,7 @@ const getUserProfile = async (req, res) => {
     }
 
     if (role === "patient") {
-      console.log('is this the issue2')
+
       const result = await db.query(`
         SELECT first_name, last_name, birth_date, phone, address,
                blood_type, height, weight, allergies, government_id

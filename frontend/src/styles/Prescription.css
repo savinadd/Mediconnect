@@ -1,0 +1,344 @@
+.prescriptions-container {
+  padding: 100px 5%;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.prescriptions-container h1,
+.prescriptions-container h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #222;
+}
+
+.prescriptions-container h2 {
+  font-size: 22px;
+  margin-top: 40px;
+  color: #333;
+}
+
+.message {
+  margin: 20px 0;
+  color: #444;
+  font-size: 16px;
+}
+
+.prescription-form {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.prescription-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.prescription-form input,
+.prescription-form textarea,
+.prescription-form button,
+.prescription-form select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.prescription-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.prescription-form button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.prescription-form button:hover {
+  background-color: #45a049;
+}
+
+.drug-search-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drug-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 4px 0;
+  margin-top: 4px;
+}
+
+.drug-suggestions li {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.drug-suggestions li:hover {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.active-prescriptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.prescription-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-left: 5px solid #34d399;
+  transition: transform 0.2s ease;
+  box-sizing: border-box;
+}
+
+.prescription-card:hover {
+  transform: translateY(-3px);
+}
+
+.prescription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prescription-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #222;
+}
+
+.prescription-status {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.prescription-status.inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.doctor {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
+
+.prescription-details {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+.no-prescriptions,
+.no-history {
+  color: #888;
+  font-size: 16px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.prescription-history {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.prescription-history th,
+.prescription-history td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.prescription-history th {
+  background-color: #f4f4f4;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+}
+
+.status.completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.end-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.end-button:hover {
+  background-color: #d9363e;
+}
+
+.popup-alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.6s ease-in-out;
+  animation: fadeInPopup 0.3s ease-out forwards;
+}
+
+.popup-alert.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 2px solid #34d399;
+}
+
+.popup-alert.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #fca5a5;
+}
+
+.popup-alert.fade-out {
+  opacity: 0;
+}
+
+@keyframes fadeInPopup {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -55%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .prescriptions-container {
+    padding: 60px 1rem;
+    text-align: center;
+  }
+
+  .prescription-form,
+  .prescription-card {
+    margin: 0 auto;
+  }
+
+  .prescription-form form {
+    align-items: center;
+  }
+
+  .prescription-header,
+  .prescription-details,
+  .doctor {
+    text-align: left;
+  }
+
+  .prescription-history {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .prescription-history table {
+    display: none;
+  }
+
+  .prescription-history tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .prescription-history tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    text-align: left;
+  }
+
+  .prescription-history tbody tr td {
+    border-bottom: none;
+    padding: 6px 0;
+  }
+
+  .prescription-history tbody tr td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+    color: #444;
+  }
+
+  .drug-suggestions {
+    font-size: 14px;
+  }
+
+  .prescription-form button,
+  .end-button {
+    width: 100%;
+  }
+}

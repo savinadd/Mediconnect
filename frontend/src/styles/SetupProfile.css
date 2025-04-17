@@ -1,51 +1,81 @@
 .setup-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f2f2f2;
-  }
-  
-  .setup-box {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    text-align: center;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background-color: #f2f2f2;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.setup-box {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.setup-box h2 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+.setup-message {
+  color: red;
+  margin-bottom: 1rem;
+  font-size: 14px;
+}
+
+.setup-input,
+select {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+  background-color: #fff;
+  appearance: none;
+}
+
+.setup-input:focus,
+select:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.setup-button {
+  width: 100%;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+  font-size: 16px;
+}
+
+.setup-button:hover {
+  background-color: #45a049;
+}
+
+@media (max-width: 480px) {
   .setup-box h2 {
-    margin-bottom: 1rem;
-    color: #333;
+    font-size: 1.5rem;
   }
-  
-  .setup-message {
-    color: green;
-    margin-bottom: 1rem;
-  }
-  
-  .setup-input {
-    width: 100%;
-    padding: 0.75rem;
-    margin: 0.5rem 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-  
+
   .setup-button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: background-color 0.3s;
+    font-size: 15px;
   }
-  
-  .setup-button:hover {
-    background-color: #45a049;
-  }
-  
+}

@@ -67,15 +67,17 @@ const Profile = () => {
     doctor: "Doctor",
     admin: "Admin"
   };
-
+  const getActivityColor = (description) => {
+    if (description.toLowerCase().includes("profile")) return "green";
+    if (description.toLowerCase().includes("symptom")) return "blue";
+    if (description.toLowerCase().includes("prescribed")) return "purple";
+    return "gray";
+  };
+  
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <img
-          src={profile_picture ? `http://localhost:3000${profile_picture}` : defaultImage}
-          alt="Profile"
-          className="profile-image"
-        />
+     
         <div className="profile-info">
           <h2>{first_name} {last_name}</h2>
           <span className="active-badge">Active {roleLabel[role]}</span>
@@ -142,8 +144,9 @@ const Profile = () => {
             {activities.length > 0 ? (
               activities.map((a, i) => (
                 <li key={i}>
-                  <span className="dot blue" />
-                  {a.description}
+                <span className={`activity-dot ${getActivityColor(a.description)}`} />
+{a.description}
+
                   <span className="timestamp">{new Date(a.created_at).toLocaleString()}</span>
                 </li>
               ))

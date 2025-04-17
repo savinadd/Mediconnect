@@ -1,80 +1,105 @@
-const db = require("../db");
 
-const getDoctorChats = async (req, res) => {
-  const doctorUserId = req.user.userId;
+// const db = require("../db");
 
-  try {
-    const doctorRes = await db.query("SELECT id FROM doctors WHERE user_id = $1", [doctorUserId]);
-    const doctorId = doctorRes.rows[0]?.id;
+// const generateRoomId = (idA, idB) => {
+//   const [a, b] = [Number(idA), Number(idB)].sort((x, y) => x - y);
+//   return `${a}-${b}`;
+// };
 
-    const chatRooms = await db.query(`
-      SELECT DISTINCT patient_id, p.first_name || ' ' || p.last_name AS patient_name
-      FROM chat_messages
-      JOIN patients p ON chat_messages.patient_id = p.id
-      WHERE chat_messages.doctor_id = $1
-    `, [doctorId]);
+// const getContactsForDoctor = async (req, res) => {
+//   const doctorUserId = req.user.userId;
+//   try {
+//     const result = await db.query(`
+//       SELECT DISTINCT 
+//         p.id            AS patient_id,
+//         u.id            AS user_id,
+//         p.first_name || ' ' || p.last_name AS patient_name
+//       FROM patients p
+//       JOIN users u ON p.user_id = u.id
+//       -- include everyone they've ever chatted with or prescribed
+//       WHERE p.id IN (
+//         SELECT pr.patient_id
+//         FROM prescriptions pr
+//         JOIN doctors d ON pr.doctor_id = d.id
+//         WHERE d.user_id = $1
+//         UNION
+//         SELECT 
+//           CASE 
+//             WHEN cm.sender_role = 'doctor' THEN cm.receiver_id 
+//             ELSE cm.sender_id 
+//           END
+//         FROM chat_messages cm
+//         WHERE cm.sender_id = $1 OR cm.receiver_id = $1
+//       )
+//     `, [doctorUserId]);
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("getContactsForDoctor:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
-    res.json(chatRooms.rows);
-  } catch (err) {
-    console.error("Get Doctor Chats Error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
-const getDoctorChatHistory = async (req, res) => {
-  const doctorUserId = req.user.userId;
-  const { patientId } = req.params;
+// const getChattedPatientUserIds = async (req, res) => {
+//   const doctorUserId = req.user.userId;
+//   try {
+//     const result = await db.query(`
+//       SELECT DISTINCT
+//         CASE 
+//           WHEN sender_role = 'doctor' THEN receiver_id 
+//           ELSE sender_id 
+//         END AS patient_user_id
+//       FROM chat_messages
+//       WHERE sender_id = $1 OR receiver_id = $1
+//     `, [doctorUserId]);
+//     res.json(result.rows.map(r => r.patient_user_id));
+//   } catch (err) {
+//     console.error("getChattedPatientUserIds:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
-  try {
-    const doctorRes = await db.query("SELECT id FROM doctors WHERE user_id = $1", [doctorUserId]);
-    const doctorId = doctorRes.rows[0]?.id;
+// const getChatMessages = async (req, res) => {
+//   const { roomId } = req.params;
+//   try {
+//     const result = await db.query(
+//       `SELECT sender_id, receiver_id, sender_role, message, timestamp
+//        FROM chat_messages
+//        WHERE room_id = $1
+//        ORDER BY timestamp ASC`,
+//       [roomId]
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("getChatMessages:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
-    const roomId = `${patientId}-${doctorId}`;
-    const result = await db.query(
-      `SELECT sender_role, message, timestamp FROM chat_messages
-       WHERE room_id = $1
-       ORDER BY timestamp ASC`,
-      [roomId]
-    );
+// const getUnreadMessages = async (req, res) => {
+//   const userId = Number(req.query.userId);
+//   if (!userId) return res.status(400).json({ message: "Missing userId" });
 
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Get Chat History Error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//   try {
+//     const result = await db.query(
+//       `SELECT room_id, COUNT(*) AS unread_count
+//        FROM chat_messages
+//        WHERE receiver_id = $1 AND is_read = false
+//        GROUP BY room_id`,
+//       [userId]
+//     );
+//     const map = {};
+//     result.rows.forEach(r => map[r.room_id] = Number(r.unread_count));
+//     res.json(map);
+//   } catch (err) {
+//     console.error("getUnreadMessages:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
-const getAllDoctors = async (req, res) => {
-    try {
-      const result = await db.query("SELECT id, first_name, last_name FROM doctors");
-      res.json(result.rows);
-    } catch (err) {
-      console.error("Fetch Doctors Error:", err);
-      res.status(500).json({ message: "Server error" });
-    }
-  };
-
-  const getChatMessages = async (req, res) => {
-    const { roomId } = req.params;
-  
-    try {
-      const result = await db.query(`
-        SELECT sender_id, receiver_id, sender_role, message, timestamp
-        FROM chat_messages
-        WHERE room_id = $1
-        ORDER BY timestamp ASC
-      `, [roomId]);
-  
-      res.json(result.rows);
-    } catch (err) {
-      console.error("Fetch Chat History Error:", err);
-      res.status(500).json({ message: "Server error while fetching chat history" });
-    }
-  };
-  
-module.exports = {
-  getDoctorChats,
-  getDoctorChatHistory,
-  getChatMessages,
-  getAllDoctors
-};
+// module.exports = {
+//   getContactsForDoctor,
+//   getChattedPatientUserIds,
+//   getChatMessages,
+//   getUnreadMessages
+// };

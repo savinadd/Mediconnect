@@ -1,5 +1,7 @@
 .edit-profile-container {
-    padding: 40px 10%;
+    padding: 80px 1rem 40px;
+    width: 100%;
+    box-sizing: border-box;
     background-color: #f9f9f9;
     min-height: 100vh;
 }
@@ -9,10 +11,15 @@
     flex-direction: column;
     gap: 30px;
     background: white;
-    padding: 30px;
+    padding: 2rem 1.5rem;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  
 
 .image-section {
     text-align: center;
@@ -43,17 +50,27 @@ label {
     font-size: 14px;
     color: #555;
 }
-
+.title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+  
 input[type="text"],
 input[type="email"],
 input[type="date"],
-input[type="file"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    margin-top: 5px;
-    border-radius: 5px;
-    font-size: 14px;
+input[type="file"],
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 
 input[type="file"] {
     padding: 5px;
@@ -79,12 +96,11 @@ input[type="file"] {
 }
 @media (max-width: 768px) {
     .edit-profile-container {
-      padding: 20px;
+      padding: 80px 1rem 40px;
     }
   
     .edit-profile-form {
-      display: flex;
-      flex-direction: column;
+      padding: 1.5rem 1rem;
     }
   
     .form-section {
@@ -92,12 +108,13 @@ input[type="file"] {
     }
   
     .form-buttons {
-      display: flex;
-      flex-direction: column;
+      text-align: center;
     }
   
     .form-buttons button {
-      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
     }
   }
   
