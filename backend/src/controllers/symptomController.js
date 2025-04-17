@@ -1,11 +1,12 @@
 const db = require("../db");
+const { BadRequestError, NotFoundError, InternalServerError, AppError } = require("../utils/errors");
 const { logActivity } = require("./activityLogController");
 const { validationResult } = require("express-validator");
 
 const addPatientSymptom = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    throw new BadRequestError(errors.array)
   }
 
   const userId = req.user.userId;
@@ -25,7 +26,7 @@ const addPatientSymptom = async (req, res) => {
     const patientResult = await db.query("SELECT id FROM patients WHERE user_id = $1", [userId]);
     const patient = patientResult.rows[0];
     if (!patient) {
-      return res.status(404).json({ message: "Patient not found." });
+      throw new NotFoundError("Patient not found." )
     }
 
     let symptomId;
@@ -54,9 +55,9 @@ const addPatientSymptom = async (req, res) => {
     await logActivity(userId, role, `Logged symptom: ${finalSymptomName}`);
     res.status(201).json({ message: "Symptom logged successfully" });
   } catch (err) {
-    console.error("Add Symptom Error:", err);
+    if (err instanceof AppError) throw err;
     if (!res.headersSent) {
-      res.status(500).json({ message: "Server error while adding symptom" });
+      throw new InternalServerError("Server error while adding symptom");
     }
   }
 };
@@ -67,7 +68,7 @@ const getPatientSymptomHistory = async (req, res) => {
   try {
     const patientResult = await db.query("SELECT id FROM patients WHERE user_id = $1", [userId]);
     const patient = patientResult.rows[0];
-    if (!patient) return res.status(404).json({ message: "Patient not found" });
+    if (!patient) throw new NotFoundError("Patient not found" )
 
     const historyResult = await db.query(`
       SELECT ps.logged_at, s.name AS symptom_name, ps.severity, ps.duration, ps.notes
@@ -79,8 +80,8 @@ const getPatientSymptomHistory = async (req, res) => {
 
     res.json(historyResult.rows);
   } catch (err) {
-    console.error("Fetch Symptom History Error:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError("Fetch Symptom History Error")
   }
 };
 

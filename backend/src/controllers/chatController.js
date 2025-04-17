@@ -1,4 +1,5 @@
 const db = require("../db");
+const { InternalServerError, NotFoundError, BadRequestError, AppError } = require("../utils/errors");
 
 const generateRoomId = (a, b) => {
   const [x, y] = [Number(a), Number(b)].sort((u, v) => u - v);
@@ -18,8 +19,8 @@ async function getDoctorsForPatient(req, res) {
     `);
     res.json(result.rows);
   } catch (err) {
-    console.error("getDoctorsForPatient:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError("Server error upon fetching doctors")
   }
 }
 
@@ -33,8 +34,8 @@ async function getChattedDoctorUserIds(req, res) {
     `, [patientUserId]);
     res.json(result.rows.map(r => r.doctor_user_id));
   } catch (err) {
-    console.error("getChattedDoctorUserIds:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError();
   }
 }
 
@@ -47,7 +48,7 @@ async function getPatientsForDoctor(req, res) {
       [doctorUserId]
     );
     if (!d.rows.length) {
-      return res.status(404).json({ message: "Doctor not found" });
+      throw new NotFoundError("Doctor not found");
     }
     const doctorId = d.rows[0].id;
 
@@ -82,8 +83,8 @@ async function getPatientsForDoctor(req, res) {
 
     res.json(result.rows);
   } catch (err) {
-    console.error("getPatientsForDoctor:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError();
   }
 }
 
@@ -100,8 +101,8 @@ async function getChattedPatientUserIds(req, res) {
     `, [doctorUserId]);
     res.json(result.rows.map(r => r.patient_user_id));
   } catch (err) {
-    console.error("getChattedPatientUserIds:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+   throw new InternalServerError();
   }
 }
 
@@ -118,14 +119,14 @@ async function getChatMessages(req, res) {
     );
     res.json(result.rows);
   } catch (err) {
-    console.error("getChatMessages:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError();
   }
 }
 
 async function getUnreadMessages(req, res) {
   const userId = Number(req.query.userId);
-  if (!userId) return res.status(400).json({ message: "Missing userId" });
+  if (!userId) throw new BadRequestError("Missing userId");
 
   try {
     const result = await db.query(
@@ -139,8 +140,8 @@ async function getUnreadMessages(req, res) {
     result.rows.forEach(r => (map[r.room_id] = Number(r.unread_count)));
     res.json(map);
   } catch (err) {
-    console.error("getUnreadMessages:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError();
   }
 }
 

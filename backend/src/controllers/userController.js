@@ -1,4 +1,5 @@
 const db = require("../db");
+const { NotFoundError, BadRequestError, InternalServerError, AppError } = require("../utils/errors");
 
 const getUserProfile = async (req, res) => {
   const userId = req.user.userId;
@@ -8,7 +9,7 @@ const getUserProfile = async (req, res) => {
     const userResult = await db.query(`SELECT id, email FROM users WHERE id = $1`, [userId]);
     const user = userResult.rows[0];
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      throw new NotFoundError("User not found.");
     }
 
     if (role === "patient") {
@@ -58,14 +59,12 @@ const getUserProfile = async (req, res) => {
         userId: user.id,
       });
     }
-    
-    
 
-    return res.status(400).json({ message: "Invalid role" });
+    throw new BadRequestError("Invalid role");
 
   } catch (err) {
-    console.error("Get User Profile Error:", err);
-    res.status(500).json({ message: "Server error while fetching profile" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError("Server error while fetching profile");
   }
 };
 
@@ -75,8 +74,8 @@ const getAllDoctors = async (req, res) => {
     const result = await db.query("SELECT id, first_name, last_name FROM doctors");
     res.json(result.rows);
   } catch (err) {
-    console.error("Fetch Doctors Error:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError("Internal server error upon fetching doctors")
   }
 };
 
@@ -85,8 +84,8 @@ const getDoctorId = async (req, res) => {
     const result = await db.query("SELECT id FROM doctors WHERE user_id = $1", [req.user.userId]);
     res.json({ doctorId: result.rows[0]?.id });
   } catch (err) {
-    console.error("Fetch Doctor ID Error:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError;
   }
 };
 
@@ -95,8 +94,8 @@ const getPatientId = async (req, res) => {
     const result = await db.query("SELECT id FROM patients WHERE user_id = $1", [req.user.userId]);
     res.json({ patientId: result.rows[0]?.id });
   } catch (err) {
-    console.error("Fetch Patient ID Error:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+   throw new InternalServerError;
   }
 };
 

@@ -43,6 +43,13 @@ class AppError extends Error {
       this.errors = errors;
     }
   }
+
+  //500 server error
+  class InternalServerError extends AppError{
+    constructor(message = "Internal Server Error"){
+        super(message, 500)
+    }
+  }
   
   module.exports = {
     AppError,
@@ -51,5 +58,6 @@ class AppError extends Error {
     ForbiddenError,
     NotFoundError,
     ValidationError,
+    InternalServerError
   };
   

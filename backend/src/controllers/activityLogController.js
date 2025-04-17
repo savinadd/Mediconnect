@@ -1,4 +1,5 @@
 const db = require("../db");
+const { InternalServerError, AppError } = require("../utils/errors");
 
 const logActivity = async (userId, role, description) => {
   await db.query(
@@ -22,8 +23,8 @@ const getRecentActivities = async (req, res) => {
     );
     res.json(result.rows);
   } catch (err) {
-    console.error("Fetch activity logs error:", err);
-    res.status(500).json({ message: "Failed to fetch activity logs" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError();
   }
 };
 

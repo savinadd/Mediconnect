@@ -14,6 +14,7 @@ const Register = () => {
   const validateForm = () => {
     const validationErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
 
     if (!email) {
       validationErrors.email = "Email is required.";
@@ -23,8 +24,9 @@ const Register = () => {
 
     if (!password) {
       validationErrors.password = "Password is required.";
-    } else if (password.length < 6) {
-      validationErrors.password = "Password must be at least 6 characters.";
+    } else if (!pwRegex.test(password)) {
+      validationErrors.password =
+        "Password must be at least 6 characters and include letters, numbers, and a special character.";
     }
 
     setErrors(validationErrors);
@@ -33,27 +35,26 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password, role }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password, role }),
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
         navigate("/setup-profile");
       } else {
         setMessage(data.message || "Registration failed");
       }
-    } catch (error) {
-      console.error("Error registering user:", error);
+    } catch (err) {
+      console.error("Error registering user:", err);
       setMessage("Server error. Please try again.");
     }
   };
@@ -74,6 +75,7 @@ const Register = () => {
             required
           />
           {errors.email && <p className="error">{errors.email}</p>}
+
           <input
             type="password"
             placeholder="Password"
@@ -83,6 +85,7 @@ const Register = () => {
             required
           />
           {errors.password && <p className="error">{errors.password}</p>}
+
           <select
             className="input-field"
             value={role}
@@ -92,8 +95,12 @@ const Register = () => {
             <option value="doctor">Doctor</option>
             <option value="admin">Admin</option>
           </select>
-          <button type="submit" className="login-button">Register</button>
+
+          <button type="submit" className="login-button">
+            Register
+          </button>
         </form>
+
         <div className="login-links">
           <a href="/login">Already have an account? Log in</a>
         </div>

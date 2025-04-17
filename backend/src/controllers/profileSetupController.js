@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const db = require("../db");
 const { patientProfileSchema, doctorProfileSchema, adminProfileSchema } = require("../schemas/userSchema");
+const { BadRequestError, InternalServerError, AppError } = require("../utils/errors");
 
 const setupUserProfile = async (req, res) => {
   const { role } = req.user; 
@@ -15,7 +16,7 @@ const setupUserProfile = async (req, res) => {
     } else if (role === "admin") {
       validatedData = adminProfileSchema.parse(req.body);
     } else {
-      return res.status(400).json({ message: "Invalid role specified" });
+      throw new BadRequestError("Invalid role specified")
     }
 
     const newUser = await db.query(
@@ -88,8 +89,8 @@ const setupUserProfile = async (req, res) => {
       user: { id: userId, role, email },
     });
   } catch (err) {
-    console.error("Error setting up user profile:", err);
-    return res.status(500).json({ message: "Error during profile setup", error: err.message });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError("Error during profile setup");
   }
 };
 

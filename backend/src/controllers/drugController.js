@@ -1,4 +1,5 @@
 const db = require("../db");
+const { InternalServerError, AppError } = require("../utils/errors");
 
 const searchDrugs = async (req, res) => {
   const { query } = req.query;
@@ -9,8 +10,8 @@ const searchDrugs = async (req, res) => {
     );
     res.json(result.rows);
   } catch (err) {
-    console.error("Search drugs error:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError;
   }
 };
 
@@ -19,8 +20,8 @@ const getAllDrugs = async (req, res) => {
     const result = await db.query(`SELECT id, name FROM drugs ORDER BY name ASC`);
     res.json(result.rows);
   } catch (err) {
-    console.error("Fetch all drugs error:", err);
-    res.status(500).json({ message: "Server error" });
+    if (err instanceof AppError) throw err;
+    throw new InternalServerError;
   }
 };
 

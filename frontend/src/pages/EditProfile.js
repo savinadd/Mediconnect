@@ -84,7 +84,7 @@ const EditProfile = () => {
         setErrors(data.errors || [{ msg: data.message }]);
       }
     } catch (err) {
-      console.error("Update error:", err);
+
       setErrors([{ msg: "Server error, please try again." }]);
     }
   };

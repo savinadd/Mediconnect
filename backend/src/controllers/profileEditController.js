@@ -1,5 +1,6 @@
 const db = require("../db");
 const { patientProfileSchema, doctorProfileSchema, adminProfileSchema } = require("../schemas/userSchema");
+const { BadRequestError } = require("../utils/errors");
 const { logActivity } = require("./activityLogController");
 
 const editUserProfile = async (req, res) => {
@@ -15,7 +16,7 @@ const editUserProfile = async (req, res) => {
     } else if (role === "admin") {
       parsed = adminProfileSchema.parse(req.body);
     } else {
-      return res.status(400).json({ message: "Invalid role" });
+      throw new BadRequestError("Invalid role");
     }
 
 

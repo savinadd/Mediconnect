@@ -1,3 +1,4 @@
+const { BadRequestError, NotFoundError, InternalServerError } = require("../../../backend/src/utils/errors");
 const db = require("../db");
 
 const addPrescription = async (req, res) => {
@@ -12,7 +13,7 @@ const addPrescription = async (req, res) => {
   } = req.body;
 
   if (!patientName || !patientDob || !patientId || !drugName || !dosage) {
-    return res.status(400).json({ message: "All fields are required." });
+    throw new BadRequestError("All fields are required.");
   }
 
   const doctor_user_id = req.user.userId;
@@ -22,13 +23,13 @@ const addPrescription = async (req, res) => {
     const doctor_id = doctorResult.rows[0]?.id;
 
     if (!doctor_id) {
-      return res.status(400).json({ message: "Doctor not found" });
+      throw new BadRequestError("Doctor not found" );
     }
 
     const drugResult = await db.query("SELECT id FROM drugs WHERE name ILIKE $1", [drugName]);
     const drug_id = drugResult.rows[0]?.id;
     if (!drug_id) {
-      return res.status(404).json({ message: "Drug not found" });
+      throw new NotFoundError("Drug not found");
     }
 
     const patientResult = await db.query(
@@ -40,7 +41,7 @@ const addPrescription = async (req, res) => {
     );
     const patient = patientResult.rows[0];
     if (!patient) {
-      return res.status(404).json({ message: "Patient not found" });
+      throw new NotFoundError("Patient not found");
     }
 
     await db.query(
@@ -51,8 +52,7 @@ const addPrescription = async (req, res) => {
 
     res.status(201).json({ message: "Prescription added successfully" });
   } catch (err) {
-    console.error("Add Prescription Error:", err);
-    res.status(500).json({ message: "Server error" });
+    throw new InternalServerError();
   }
 };
 
@@ -66,8 +66,7 @@ const endPrescription = async (req, res) => {
     );
     res.json({ message: "Prescription marked as ended" });
   } catch (err) {
-    console.error("End Prescription Error:", err);
-    res.status(500).json({ message: "Server error" });
+    throw new InternalServerError();
   }
 };
 
@@ -79,7 +78,7 @@ const getPrescriptionsByDoctor = async (req, res) => {
     const doctor_id = doctorResult.rows[0]?.id;
 
     if (!doctor_id) {
-      return res.status(400).json({ message: "Doctor not found" });
+      throw new NotFoundError("Doctor not found");
     }
 
     const result = await db.query(`
@@ -95,8 +94,7 @@ const getPrescriptionsByDoctor = async (req, res) => {
 
     res.json(result.rows);
   } catch (err) {
-    console.error("Doctor Prescription Fetch Error:", err);
-    res.status(500).json({ message: "Server error" });
+   throw new InternalServerError();
   }
 };
 
