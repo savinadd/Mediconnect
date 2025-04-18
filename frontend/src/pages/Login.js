@@ -12,6 +12,7 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
+    setError("");
 
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
@@ -39,14 +40,16 @@ const Login = () => {
     <div className="login-container">
       <div className="login-box">
         <h2>Welcome to MediConnect!</h2>
-        <p>Connect with healthcare professionals, track symptoms and medications, and more.</p>
-        <form onSubmit={handleLogin}>
+        <p>Securely connect with healthcare professionals and manage your wellness.</p>
+
+        <form onSubmit={handleLogin} className="login-form">
           <input
-            type="text"
+            type="email"
             placeholder="Email"
             className="input-field"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             type="password"
@@ -54,12 +57,22 @@ const Login = () => {
             className="input-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          <button type="submit" className="login-button">Log In</button>
+
+          {error && <p className="error">{error}</p>}
+
+          <div className="login-actions">
+            <button type="submit" className="login-button">Log In</button>
+            <button
+              type="button"
+              className="register-button"
+              onClick={() => navigate("/register")}
+            >
+              Register New Account
+            </button>
+          </div>
         </form>
-        {error && <p className="error-message">{error}</p>}
-        <div className="login-links"><a href="#">Forgot Password?</a></div>
-        <a href="/register" className="register-button">Register New Account</a>
       </div>
     </div>
   );

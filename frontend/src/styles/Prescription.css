@@ -1,5 +1,5 @@
 .prescriptions-container {
-  padding: 100px 5%;
+  padding: 70px 5%;
   background-color: #f9f9f9;
   width: 100%;
   box-sizing: border-box;
@@ -270,75 +270,93 @@
   }
 }
 
+.prescriptions-container {
+  padding: 70px 5%;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.prescriptions-container h1,
+.prescriptions-container h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1a202c;
+  margin-bottom: 10px;
+}
+
+.prescriptions-container h2 {
+  font-size: 22px;
+  margin-top: 40px;
+  color: #2d3748;
+}
+
+.prescription-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.prescription-form input,
+.prescription-form textarea,
+.prescription-form select {
+  font-size: 15px;
+  padding: 12px;
+}
+
+.prescription-form button {
+  font-size: 15px;
+  padding: 12px;
+}
+
+.prescription-card {
+  max-width: 350px;
+  transition: box-shadow 0.2s ease;
+}
+
+.prescription-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.prescription-status {
+  font-size: 13px;
+}
+
+.prescription-details p {
+  margin: 6px 0;
+  line-height: 1.4;
+}
 @media (max-width: 768px) {
-  .prescriptions-container {
-    padding: 60px 1rem;
-    text-align: center;
-  }
-
-  .prescription-form,
-  .prescription-card {
-    margin: 0 auto;
-  }
-
-  .prescription-form form {
-    align-items: center;
-  }
-
-  .prescription-header,
-  .prescription-details,
-  .doctor {
-    text-align: left;
-  }
-
   .prescription-history {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    box-shadow: none;
-    border-radius: 0;
+    border: 0;
   }
 
-  .prescription-history table {
+  .prescription-history thead {
     display: none;
   }
 
-  .prescription-history tbody {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .prescription-history tbody tr {
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    padding: 16px;
-    border-radius: 10px;
+  .prescription-history tr {
+    margin-bottom: 15px;
+    display: block;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .prescription-history td {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
     text-align: left;
+    font-size: 14px;
+    border: none;
   }
 
-  .prescription-history tbody tr td {
-    border-bottom: none;
-    padding: 6px 0;
-  }
-
-  .prescription-history tbody tr td::before {
+  .prescription-history td::before {
     content: attr(data-label);
     font-weight: bold;
-    display: block;
-    font-size: 0.9rem;
-    margin-bottom: 2px;
     color: #444;
-  }
-
-  .drug-suggestions {
-    font-size: 14px;
-  }
-
-  .prescription-form button,
-  .end-button {
-    width: 100%;
+    padding-right: 10px;
   }
 }

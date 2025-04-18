@@ -1,6 +1,6 @@
 .calendar-container,
 .book-container {
-  padding: 4rem;
+  padding: 3rem 6rem 6rem 6rem;
   box-sizing: border-box;
 }
 

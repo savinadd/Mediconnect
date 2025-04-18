@@ -38,15 +38,13 @@ const Register = () => {
     if (!validateForm()) return;
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/auth/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ email, password, role }),
-        }
-      );
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password, role }),
+      });
+
       const data = await res.json();
       if (res.ok) {
         navigate("/setup-profile");
@@ -62,10 +60,12 @@ const Register = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2>Create an Account</h2>
-        <p>Join MediConnect today</p>
-        {message && <p className="message">{message}</p>}
-        <form onSubmit={handleRegister}>
+        <h2>Register for MediConnect</h2>
+        <p>Create your secure account</p>
+
+        {message && <p className="error">{message}</p>}
+
+        <form onSubmit={handleRegister} className="login-form">
           <input
             type="email"
             placeholder="Email"
@@ -96,14 +96,19 @@ const Register = () => {
             <option value="admin">Admin</option>
           </select>
 
-          <button type="submit" className="login-button">
-            Register
-          </button>
+          <div className="login-actions">
+            <button type="submit" className="login-button">
+              Register
+            </button>
+            <button
+              type="button"
+              className="register-button"
+              onClick={() => navigate("/login")}
+            >
+              Already have an account? Log in
+            </button>
+          </div>
         </form>
-
-        <div className="login-links">
-          <a href="/login">Already have an account? Log in</a>
-        </div>
       </div>
     </div>
   );
