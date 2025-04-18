@@ -14,45 +14,50 @@ const Symptoms = () => {
   const [history, setHistory] = useState([]);
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((f) => ({ ...f, [e.target.name]: e.target.value }));
   };
 
   const handleSymptomSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/symptoms/log`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify(formData)
-      });
-
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/symptoms/log`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(formData),
+        }
+      );
       const data = await res.json();
+
       if (res.ok) {
         toast.success("Symptom logged!");
         setFormData({ name: "", description: "", severity: "", duration: "", notes: "" });
         fetchSymptomHistory();
       } else {
-        toast.error(data.message || "Error logging symptom");
+        const msg =
+          Array.isArray(data.message) ? data.message.join(" • ") : data.message;
+        toast.error(msg || "Error logging symptom");
       }
     } catch (err) {
       console.error("Symptom Log Error:", err);
+      toast.error(err.message || "Error logging symptom");
     }
   };
 
   const fetchSymptomHistory = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/symptoms/history`, {
-        credentials: "include"
-      });
-
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/symptoms/history`,
+        { credentials: "include" }
+      );
       const data = await res.json();
       if (res.ok) setHistory(data);
     } catch (err) {
       console.error("Error fetching symptom history:", err);
+      toast.error("Could not load history");
     }
   };
 
@@ -111,12 +116,12 @@ const Symptoms = () => {
           onChange={handleInputChange}
         />
 
-        <button type="submit" className="submit-button">Submit Symptom</button>
+        <button type="submit" className="submit-button">
+          Submit Symptom
+        </button>
       </form>
 
       <h2>Symptom History</h2>
-
-      
       {history.length > 0 ? (
         <table className="symptom-history-table">
           <thead>
@@ -129,8 +134,8 @@ const Symptoms = () => {
             </tr>
           </thead>
           <tbody>
-            {history.map((entry, index) => (
-              <tr key={index}>
+            {history.map((entry, i) => (
+              <tr key={i}>
                 <td>{new Date(entry.logged_at).toLocaleString()}</td>
                 <td>{entry.symptom_name}</td>
                 <td>
@@ -148,17 +153,26 @@ const Symptoms = () => {
         <p className="no-history">No symptom history available.</p>
       )}
 
-      {history.length > 0 && history.map((entry, index) => (
-        <div className="symptom-card" key={index}>
-          <p><strong>Date:</strong> {new Date(entry.logged_at).toLocaleString()}</p>
-          <p><strong>Symptom:</strong> {entry.symptom_name}</p>
-          <p><strong>Severity:</strong>{" "}
+      {history.map((entry, i) => (
+        <div className="symptom-card" key={i}>
+          <p>
+            <strong>Date:</strong> {new Date(entry.logged_at).toLocaleString()}
+          </p>
+          <p>
+            <strong>Symptom:</strong> {entry.symptom_name}
+          </p>
+          <p>
+            <strong>Severity:</strong>{" "}
             <span className={`severity-tag ${entry.severity?.toLowerCase()}`}>
               {entry.severity}
             </span>
           </p>
-          <p><strong>Duration:</strong> {entry.duration}</p>
-          <p><strong>Notes:</strong> {entry.notes}</p>
+          <p>
+            <strong>Duration:</strong> {entry.duration}
+          </p>
+          <p>
+            <strong>Notes:</strong> {entry.notes}
+          </p>
         </div>
       ))}
     </div>

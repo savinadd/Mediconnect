@@ -15,6 +15,7 @@ const activityRoutes = require("./routes/activityRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const aptRoutes = require("./routes/appointmentRoutes")
 
 const {
   AppError,
@@ -49,6 +50,8 @@ app.use("/api/symptoms", symptomRoutes);
 app.use("/api/activity", activityRoutes);
 
 app.use("/api/chat", chatRoutes);
+app.use("/api/appointments", aptRoutes);
+
 
 app.use((req, res, next) => {
   next(new NotFoundError(`Cannot ${req.method} ${req.originalUrl}`));

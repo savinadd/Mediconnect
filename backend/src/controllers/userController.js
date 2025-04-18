@@ -2,57 +2,105 @@ const db = require("../db");
 const { NotFoundError, BadRequestError, InternalServerError, AppError } = require("../utils/errors");
 
 const getUserProfile = async (req, res) => {
-  const userId = req.user.userId;
-  const role = req.user.role;
+  const userId = req.user?.userId;
+  const role   = req.user?.role;
+
+  if (!userId) {
+    return res.status(200).json({ profileCompleted: false });
+  }
 
   try {
-    const userResult = await db.query(`SELECT id, email FROM users WHERE id = $1`, [userId]);
+  
+    const userResult = await db.query(
+      `SELECT id, email FROM users WHERE id = $1`,
+      [userId]
+    );
     const user = userResult.rows[0];
+
     if (!user) {
-      throw new NotFoundError("User not found.");
+      return res.status(200).json({ profileCompleted: false });
     }
 
-    if (role === "patient") {
 
-      const result = await db.query(`
+    if (role === "patient") {
+      const { rows } = await db.query(
+        `
         SELECT first_name, last_name, birth_date, phone, address,
                blood_type, height, weight, allergies, government_id
-        FROM patients WHERE user_id = $1
-      `, [userId]);
+        FROM patients
+        WHERE user_id = $1
+        `,
+        [userId]
+      );
 
-      if (result.rows.length === 0) {
-        return res.status(200).json({ profileCompleted: false, role, email: user.email, userId: user.id });
+      if (rows.length === 0) {
+        return res.status(200).json({
+          profileCompleted: false,
+          role,
+          email: user.email,
+          userId: user.id,
+        });
       }
 
-      return res.json({ ...result.rows[0], email: user.email, role, profileCompleted: true, userId: user.id });
+      return res.json({
+        ...rows[0],
+        email: user.email,
+        role,
+        profileCompleted: true,
+        userId: user.id,
+      });
     }
 
     if (role === "doctor") {
-      const result = await db.query(`
+      const { rows } = await db.query(
+        `
         SELECT first_name, last_name, phone, address,
                specialization, license_number
-        FROM doctors WHERE user_id = $1
-      `, [userId]);
+        FROM doctors
+        WHERE user_id = $1
+        `,
+        [userId]
+      );
 
-      if (result.rows.length === 0) {
-        return res.status(200).json({ profileCompleted: false, role, email: user.email, userId: user.id });
+      if (rows.length === 0) {
+        return res.status(200).json({
+          profileCompleted: false,
+          role,
+          email: user.email,
+          userId: user.id,
+        });
       }
 
-      return res.json({ ...result.rows[0], email: user.email, role, profileCompleted: true, userId: user.id });
+      return res.json({
+        ...rows[0],
+        email: user.email,
+        role,
+        profileCompleted: true,
+        userId: user.id,
+      });
     }
+
     if (role === "admin") {
-      const result = await db.query(`
+      const { rows } = await db.query(
+        `
         SELECT first_name, last_name, phone
         FROM admins
         WHERE user_id = $1
-      `, [userId]);
-    
-      if (result.rows.length === 0) {
-        return res.status(200).json({ profileCompleted: false, role, email: user.email, userId: user.id });
+        `,
+        [userId]
+      );
+
+      if (rows.length === 0) {
+        return res.status(200).json({
+          profileCompleted: false,
+          role,
+          email: user.email,
+          userId: user.id,
+        });
       }
-    
+
       return res.json({
-        ...result.rows[0],
+        ...rows[0],
         email: user.email,
         role,
         profileCompleted: true,
@@ -61,9 +109,10 @@ const getUserProfile = async (req, res) => {
     }
 
     throw new BadRequestError("Invalid role");
-
   } catch (err) {
+
     if (err instanceof AppError) throw err;
+    console.error("Unexpected error in getUserProfile", err);
     throw new InternalServerError("Server error while fetching profile");
   }
 };

@@ -1,5 +1,4 @@
-// tests/adminController.test.js
-const db = require("../src/db");
+/const db = require("../src/db");
 jest.mock("../src/db");
 
 const {

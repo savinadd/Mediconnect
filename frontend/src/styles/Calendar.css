@@ -1,0 +1,18 @@
+.calendar-container,
+.book-container {
+  padding: 4rem;
+  box-sizing: border-box;
+}
+
+/* shrink toolbar and headers on small screens */
+@media (max-width: 768px) {
+  .calendar-container .rbc-toolbar button,
+  .book-container .rbc-toolbar button {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .calendar-container .rbc-header,
+  .book-container .rbc-header {
+    font-size: 0.75rem;
+  }
+}

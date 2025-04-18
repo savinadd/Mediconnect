@@ -1,15 +1,16 @@
 const db = require("../src/db");
-const { addPatientSymptom, getPatientSymptomHistory } = require("../src/controllers/symptomController");
+const {
+  addPatientSymptom,
+  getPatientSymptomHistory,
+} = require("../src/controllers/symptomController");
 const {
   BadRequestError,
   NotFoundError,
   InternalServerError,
 } = require("../src/utils/errors");
-const { validationResult } = require("express-validator");
 const { logActivity } = require("../src/controllers/activityLogController");
 
 jest.mock("../src/db");
-jest.mock("express-validator");
 jest.mock("../src/controllers/activityLogController");
 
 describe("symptomController", () => {
@@ -23,48 +24,62 @@ describe("symptomController", () => {
 
   describe("addPatientSymptom", () => {
     it("throws BadRequestError if validation fails", async () => {
-      validationResult.mockReturnValue({ isEmpty: () => false, array: () => [{ msg: "err" }] });
+
       await expect(addPatientSymptom(req, res)).rejects.toBeInstanceOf(
         BadRequestError
       );
     });
 
     it("throws NotFoundError if patient not found", async () => {
-      validationResult.mockReturnValue({ isEmpty: () => true });
-      db.query.mockResolvedValueOnce({ rows: [] });
+      req.body = { description: "Headache" };
+      db.query.mockResolvedValueOnce({ rows: [] }); // patient lookup
       await expect(addPatientSymptom(req, res)).rejects.toBeInstanceOf(
         NotFoundError
       );
     });
 
-    it("creates new and logs activity", async () => {
-      validationResult.mockReturnValue({ isEmpty: () => true });
-      req.body = { symptomName: "Fever", description: "d", severity: "high", duration: "1d", notes: "n" };
+    it("creates new symptom and logs activity", async () => {
+      req.body = {
+        symptomName: "Fever",
+        description: "High fever",
+        severity: "high",
+        duration: "1d",
+        notes: "Took paracetamol",
+      };
 
       db.query
-        .mockResolvedValueOnce({ rows: [{ id: 9 }] })
-        .mockResolvedValueOnce({ rows: [] })
-        .mockResolvedValueOnce({ rows: [{ id: 7 }] })
-        .mockResolvedValueOnce({});
+        .mockResolvedValueOnce({ rows: [{ id: 9 }] })   // patient lookup
+        .mockResolvedValueOnce({ rows: [] })            // existingSymptom lookup
+        .mockResolvedValueOnce({ rows: [{ id: 7 }] })   // insert into symptoms
+        .mockResolvedValueOnce({});                     // insert into patient_symptoms
 
       await addPatientSymptom(req, res);
 
       expect(db.query).toHaveBeenCalledWith(
         expect.stringContaining("INSERT INTO symptoms"),
-        expect.arrayContaining(["Fever", "d"])
+        ["Fever", "High fever"]
       );
+
       expect(db.query).toHaveBeenCalledWith(
         expect.stringContaining("INSERT INTO patient_symptoms"),
         expect.any(Array)
       );
-      expect(logActivity).toHaveBeenCalledWith(1, "patient", expect.stringContaining("Logged symptom"));
+
+      expect(logActivity).toHaveBeenCalledWith(
+        1,
+        "patient",
+        expect.stringContaining("Logged symptom")
+      );
+
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith({ message: "Symptom logged successfully" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Symptom logged successfully",
+      });
     });
 
     it("wraps DB error in InternalServerError", async () => {
-      validationResult.mockReturnValue({ isEmpty: () => true });
-      db.query.mockRejectedValue(new Error());
+      req.body = { description: "Cough" };
+      db.query.mockRejectedValue(new Error("boom"));
       await expect(addPatientSymptom(req, res)).rejects.toBeInstanceOf(
         InternalServerError
       );
@@ -81,13 +96,13 @@ describe("symptomController", () => {
 
     it("returns history rows on success", async () => {
       db.query
-        .mockResolvedValueOnce({ rows: [{ id: 5 }] })            // patient
+        .mockResolvedValueOnce({ rows: [{ id: 5 }] })       // patient lookup
         .mockResolvedValueOnce({ rows: [{ symptom_name: "S" }] }); // history
       await getPatientSymptomHistory(req, res);
       expect(res.json).toHaveBeenCalledWith([{ symptom_name: "S" }]);
     });
 
-    it("wraps errors", async () => {
+    it("wraps errors in InternalServerError", async () => {
       db.query.mockRejectedValue(new Error());
       await expect(getPatientSymptomHistory(req, res)).rejects.toBeInstanceOf(
         InternalServerError
