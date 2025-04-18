@@ -2,15 +2,7 @@ const db = require("../db");
 const { BadRequestError, NotFoundError, InternalServerError, AppError } = require("../utils/errors");
 const { logActivity } = require("./activityLogController");
 const { z } = require("zod");
-
-const symptomSchema = z.object({
-  symptomName: z.string().optional().trim(),
-  name:         z.string().optional().trim(),
-  description:  z.string().nonempty({ message: "Description is required" }).trim(),
-  severity:     z.string().optional().trim(),
-  duration:     z.string().optional().trim(),
-  notes:        z.string().optional().trim(),
-});
+const {symptomSchema} = require("../schemas/symptomSchema")
 
 const addPatientSymptom = async (req, res) => {
 
