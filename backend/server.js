@@ -7,7 +7,7 @@ const cors = require("cors");
 const db = require("./src/db");
 const appRoutes = require("./src/app");
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const FRONTEND_URL = process.env.FRONTEND_URL;
 const PORT = process.env.PORT || 3001;
 
 // 1) Create the Express app:

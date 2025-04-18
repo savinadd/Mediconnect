@@ -28,7 +28,7 @@ const app = express();
 app.use(helmet());
 app.use(hpp());
 
-const FRONTEND = process.env.FRONTEND_URL || "http://localhost:3000";
+const FRONTEND = process.env.FRONTEND_URL;
 app.use(cors({
   origin: FRONTEND,
   methods: ["GET", "POST", "PUT", "DELETE"],
