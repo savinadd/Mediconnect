@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config();
 const express = require("express");
 const http = require("http");
@@ -10,20 +9,16 @@ const appRoutes = require("./src/app");
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const PORT = process.env.PORT || 3001;
 
-// 1) Create the Express app:
 const app = express();
 
-// 2) Middlewares:
 app.use(cors({
   origin: FRONTEND_URL,
   credentials: true
 }));
 app.use(express.json());
 
-// 3) Your application routes:
 app.use(appRoutes);
 
-// 4) Create the HTTP & Socket server:
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
@@ -32,7 +27,6 @@ const io = socketIo(server, {
   }
 });
 
-// 5) Socket‑IO logic:
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
@@ -83,12 +77,10 @@ io.on("connection", (socket) => {
   });
 });
 
-// 6) Only start listening if this file is run directly:
 if (require.main === module) {
   server.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
   });
 }
 
-// 7) Export the *app* for SuperTest (and anything else that wants it):
 module.exports = app;
