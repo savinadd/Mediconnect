@@ -12,7 +12,6 @@ const prescriptionRoutes = require("./routes/prescriptionRoutes");
 const symptomRoutes = require("./routes/symptomRoutes");
 const drugRoutes = require("./routes/drugRoutes");
 const activityRoutes = require("./routes/activityRoutes");
-const doctorRoutes = require("./routes/doctorRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const aptRoutes = require("./routes/appointmentRoutes")
