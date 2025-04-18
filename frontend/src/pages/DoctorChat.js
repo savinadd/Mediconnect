@@ -9,7 +9,8 @@ import { io } from 'socket.io-client';
 import "../styles/Chat.css";
 import { AuthContext } from "../context/AuthContext";
 
-const socket = io('http://localhost:3001');
+const socket = io(process.env.REACT_APP_BACKEND_URL);
+
 
 const generateRoomId = (a, b) => {
   const [x,y] = [Number(a),Number(b)].sort((u,v)=>u-v);
