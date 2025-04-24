@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Calendar } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import React, { useState } from 'react';
+import { Calendar } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 /**
  * A thin wrapper around react-big-calendar that
@@ -15,14 +15,14 @@ export default function CalendarWrapper({
   onSelectEvent,
   onSelectSlot,
   eventPropGetter,
-  startAccessor = "start",
-  endAccessor = "end",
-  views = ["month", "week", "day"],
-  defaultView = "week",
+  startAccessor = 'start',
+  endAccessor = 'end',
+  views = ['month', 'week', 'day'],
+  defaultView = 'week',
   defaultDate = new Date(),
-  style = { height: "80vh" },
+  style = { height: '80vh' },
   toolbar = true,
-  drilldownView = "day",
+  drilldownView = 'day',
 }) {
   const [view, setView] = useState(defaultView);
   const [date, setDate] = useState(defaultDate);

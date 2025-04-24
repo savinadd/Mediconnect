@@ -1,20 +1,22 @@
-require("dotenv").config();
-const express = require("express");
-const http = require("http");
-const socketIo = require("socket.io");
-const cors = require("cors");
-const db = require("./src/db");
-const appRoutes = require("./src/app");
+require('dotenv').config({ path: '.env.local' });
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const cors = require('cors');
+const db = require('./src/db');
+const appRoutes = require('./src/app');
 
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.use(cors({
-  origin: FRONTEND_URL,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use(appRoutes);
@@ -23,14 +25,14 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: FRONTEND_URL,
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+io.on('connection', socket => {
+  console.log('User connected:', socket.id);
 
-  socket.on("join-room", async (roomId, userId) => {
+  socket.on('join-room', async (roomId, userId) => {
     socket.join(roomId);
     console.log(`Socket ${socket.id} joined room ${roomId}`);
     try {
@@ -43,12 +45,12 @@ io.on("connection", (socket) => {
         [roomId, userId]
       );
     } catch (err) {
-      console.error("Failed to mark messages as read:", err);
+      console.error('Failed to mark messages as read:', err);
     }
   });
 
-  socket.on("send-message", async ({ roomId, message, senderRole, senderId, receiverId }) => {
-    console.log("Incoming message:", { roomId, message, senderRole, senderId, receiverId });
+  socket.on('send-message', async ({ roomId, message, senderRole, senderId, receiverId }) => {
+    console.log('Incoming message:', { roomId, message, senderRole, senderId, receiverId });
     try {
       await db.query(
         `INSERT INTO chat_messages
@@ -56,24 +58,24 @@ io.on("connection", (socket) => {
          VALUES ($1,$2,$3,$4,$5,false)`,
         [roomId, senderId, receiverId, message, senderRole]
       );
-      io.to(roomId).emit("receive-message", {
+      io.to(roomId).emit('receive-message', {
         roomId,
         message,
         sender_role: senderRole,
         sender_id: senderId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (err) {
-      console.error("DB Insert Error:", err);
+      console.error('DB Insert Error:', err);
     }
   });
 
-  socket.on("typing", (data) => {
-    io.to(data.roomId).emit("typing", data);
+  socket.on('typing', data => {
+    io.to(data.roomId).emit('typing', data);
   });
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
   });
 });
 

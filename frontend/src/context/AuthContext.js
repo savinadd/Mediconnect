@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
@@ -14,9 +14,9 @@ export const AuthProvider = ({ children }) => {
       const fetchSession = async () => {
         try {
           const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, {
-            credentials: "include",
+            credentials: 'include',
           });
-  
+
           if (response.ok) {
             const data = await response.json();
 
@@ -28,13 +28,12 @@ export const AuthProvider = ({ children }) => {
               setIsLoggedIn(false);
             }
           } else if (response.status === 404) {
-
             setIsLoggedIn(false);
           } else {
             setIsLoggedIn(false);
           }
         } catch (error) {
-          console.error("Session check failed:", error);
+          console.error('Session check failed:', error);
           setIsLoggedIn(false);
         } finally {
           setLoading(false);
@@ -46,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (skipFetch) {
-      const timeout = setTimeout(() => setSkipFetch(false), 1000); 
+      const timeout = setTimeout(() => setSkipFetch(false), 1000);
       return () => clearTimeout(timeout);
     }
   }, [skipFetch]);
@@ -61,11 +60,11 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/logout`, {
-        method: "POST",
-        credentials: "include",
+        method: 'POST',
+        credentials: 'include',
       });
     } catch (err) {
-      console.error("Logout request failed:", err);
+      console.error('Logout request failed:', err);
     } finally {
       setIsLoggedIn(false);
       setUserId(null);

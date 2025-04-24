@@ -1,59 +1,56 @@
-const db = require("../src/db");
-jest.mock("../src/db");
+// tests/activityController.test.js
+const db = require('../db');
+jest.mock('../db');
 
-const {
-  logActivity,
-  getRecentActivities
-} = require("../src/controllers/activityLogController");
-const { InternalServerError } = require("../src/utils/errors");
+const { InternalServerError, AppError } = require('../utils/errors');
+const { logActivity, getRecentActivities } = require('../controllers/activityController');
 
-describe("activityLogController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+function mockResponse() {
+  const res = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  return res;
+}
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+describe('activityController.logActivity', () => {
+  it('inserts a new activity record', async () => {
+    db.query.mockResolvedValue();
+    await logActivity(1, 'user', 'did stuff');
+    expect(db.query).toHaveBeenCalledWith(
+      'INSERT INTO activity_logs (user_id, role, description) VALUES ($1, $2, $3)',
+      [1, 'user', 'did stuff']
+    );
+  });
+});
+
+describe('activityController.getRecentActivities', () => {
+  it('returns rows on success', async () => {
+    const rows = [{ description: 'x', created_at: 'now' }];
+    db.query.mockResolvedValue({ rows });
+    const req = { user: { userId: 7, role: 'admin' } };
+    const res = mockResponse();
+
+    await getRecentActivities(req, res);
+    expect(db.query).toHaveBeenCalledWith(expect.any(String), [7, 'admin']);
+    expect(res.json).toHaveBeenCalledWith(rows);
   });
 
-  describe("logActivity", () => {
-    it("should insert a new activity log with the correct SQL and parameters", async () => {
-      db.query.mockResolvedValue({});
-      await logActivity(42, "patient", "Test action");
-
-      expect(db.query).toHaveBeenCalledWith(
-        "INSERT INTO activity_logs (user_id, role, description) VALUES ($1, $2, $3)",
-        [42, "patient", "Test action"]
-      );
-    });
+  it('throws InternalServerError on generic error', async () => {
+    db.query.mockRejectedValue(new Error('fail'));
+    await expect(
+      getRecentActivities({ user: { userId: 1, role: 'r' } }, mockResponse())
+    ).rejects.toBeInstanceOf(InternalServerError);
   });
 
-  describe("getRecentActivities", () => {
-    let req, res;
-
-    beforeEach(() => {
-      req = { user: { userId: 7, role: "doctor" } };
-      res = { json: jest.fn() };
-    });
-
-    it("should fetch the 10 most recent activities and return them", async () => {
-      const mockRows = [
-        { description: "foo", created_at: new Date("2022-01-01") },
-        { description: "bar", created_at: new Date("2022-01-02") },
-      ];
-      db.query.mockResolvedValue({ rows: mockRows });
-
-      await getRecentActivities(req, res);
-
-      expect(db.query).toHaveBeenCalledWith(
-        expect.stringContaining("SELECT description, created_at"),
-        [7, "doctor"]
-      );
-      expect(res.json).toHaveBeenCalledWith(mockRows);
-    });
-
-    it("should throw InternalServerError if the database query fails", async () => {
-      db.query.mockRejectedValue(new Error("DB is down"));
-
-      await expect(getRecentActivities(req, res))
-        .rejects
-        .toBeInstanceOf(InternalServerError);
-    });
+  it('propagates AppError', async () => {
+    const err = new AppError('app error');
+    db.query.mockRejectedValue(err);
+    await expect(
+      getRecentActivities({ user: { userId: 1, role: 'r' } }, mockResponse())
+    ).rejects.toBe(err);
   });
 });

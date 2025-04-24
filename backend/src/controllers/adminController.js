@@ -1,22 +1,22 @@
-const db = require("../db");
-const { InternalServerError, AppError } = require("../utils/errors");
+const db = require('../db');
+const { InternalServerError, AppError } = require('../utils/errors');
 
 const getAdminSummary = async (req, res) => {
   try {
-    const users   = await db.query("SELECT COUNT(*) FROM users");
-    const doctors = await db.query("SELECT COUNT(*) FROM doctors");
-    const patients= await db.query("SELECT COUNT(*) FROM patients");
-    const admins  = await db.query("SELECT COUNT(*) FROM admins");
+    const users = await db.query('SELECT COUNT(*) FROM users');
+    const doctors = await db.query('SELECT COUNT(*) FROM doctors');
+    const patients = await db.query('SELECT COUNT(*) FROM patients');
+    const admins = await db.query('SELECT COUNT(*) FROM admins');
 
     res.json({
-      totalUsers:    parseInt(users.rows[0].count, 10),
-      totalDoctors:  parseInt(doctors.rows[0].count, 10),
+      totalUsers: parseInt(users.rows[0].count, 10),
+      totalDoctors: parseInt(doctors.rows[0].count, 10),
       totalPatients: parseInt(patients.rows[0].count, 10),
-      totalAdmins:   parseInt(admins.rows[0].count, 10)
+      totalAdmins: parseInt(admins.rows[0].count, 10),
     });
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new InternalServerError("Failed to fetch administrator summary");
+    throw new InternalServerError('Failed to fetch administrator summary');
   }
 };
 
@@ -30,7 +30,7 @@ const getAllUsers = async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new InternalServerError("Failed to fetch users");
+    throw new InternalServerError('Failed to fetch users');
   }
 };
 
@@ -51,7 +51,7 @@ const getDoctors = async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new InternalServerError("Failed to fetch all doctors");
+    throw new InternalServerError('Failed to fetch all doctors');
   }
 };
 
@@ -72,7 +72,7 @@ const getPatients = async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new InternalServerError("Failed to fetch patients");
+    throw new InternalServerError('Failed to fetch patients');
   }
 };
 
@@ -93,41 +93,37 @@ const getAdmins = async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new InternalServerError("Failed to fetch admins");
+    throw new InternalServerError('Failed to fetch admins');
   }
 };
 
 const deleteUser = async (req, res) => {
   const { userId } = req.params;
-  console.log("Delete request received for user ID:", userId);
+  console.log('Delete request received for user ID:', userId);
 
   try {
     const [pat, doc, adm] = await Promise.all([
-      db.query("SELECT * FROM patients WHERE id = $1", [userId]),
-      db.query("SELECT * FROM doctors  WHERE id = $1", [userId]),
-      db.query("SELECT * FROM admins   WHERE id = $1", [userId])
+      db.query('SELECT * FROM patients WHERE id = $1', [userId]),
+      db.query('SELECT * FROM doctors  WHERE id = $1', [userId]),
+      db.query('SELECT * FROM admins   WHERE id = $1', [userId]),
     ]);
 
-    if (
-      pat.rows.length === 0 &&
-      doc.rows.length === 0 &&
-      adm.rows.length === 0
-    ) {
-      throw new InternalServerError("User not found for deletion");
+    if (pat.rows.length === 0 && doc.rows.length === 0 && adm.rows.length === 0) {
+      throw new InternalServerError('User not found for deletion');
     }
 
     if (pat.rows.length > 0) {
-      await db.query("DELETE FROM patients WHERE id = $1", [userId]);
+      await db.query('DELETE FROM patients WHERE id = $1', [userId]);
     } else if (doc.rows.length > 0) {
-      await db.query("DELETE FROM doctors WHERE id = $1", [userId]);
+      await db.query('DELETE FROM doctors WHERE id = $1', [userId]);
     } else {
-      await db.query("DELETE FROM admins WHERE id = $1", [userId]);
+      await db.query('DELETE FROM admins WHERE id = $1', [userId]);
     }
 
-    res.json({ message: "User deleted successfully" });
+    res.json({ message: 'User deleted successfully' });
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new InternalServerError("Failed to delete user");
+    throw new InternalServerError('Failed to delete user');
   }
 };
 
@@ -137,5 +133,5 @@ module.exports = {
   getDoctors,
   getPatients,
   getAdmins,
-  deleteUser
+  deleteUser,
 };

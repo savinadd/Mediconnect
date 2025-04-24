@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext } from "react";
-import "../styles/Profile.css";
-import { Link } from "react-router-dom";
-import defaultImage from "../assets/defaultImage.jpg";
-import { AuthContext } from "../context/AuthContext";
+import React, { useEffect, useState, useContext } from 'react';
+import '../styles/Profile.css';
+import { Link } from 'react-router-dom';
+import defaultImage from '../assets/defaultImage.jpg';
+import { AuthContext } from '../context/AuthContext';
 
 const Profile = () => {
   const { userRole: role, isLoggedIn } = useContext(AuthContext);
@@ -15,28 +15,28 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, {
-          credentials: "include"
+          credentials: 'include',
         });
         const data = await res.json();
-        console.log("AuthContext role at render:", role);
+        console.log('AuthContext role at render:', role);
 
         if (res.ok) setProfileData(data);
-        else console.error("Error fetching profile:", data.message);
+        else console.error('Error fetching profile:', data.message);
       } catch (err) {
-        console.error("Error:", err);
+        console.error('Error:', err);
       }
     };
 
     const fetchActivity = async () => {
       try {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/activity/recent`, {
-          credentials: "include"
+          credentials: 'include',
         });
         const data = await res.json();
         if (res.ok) setActivities(data);
-        else console.error("Error fetching activity:", data.message);
+        else console.error('Error fetching activity:', data.message);
       } catch (err) {
-        console.error("Error:", err);
+        console.error('Error:', err);
       }
     };
 
@@ -59,27 +59,28 @@ const Profile = () => {
     allergies,
     specialization,
     license_number,
-    profile_picture
+    profile_picture,
   } = profileData;
 
   const roleLabel = {
-    patient: "Patient",
-    doctor: "Doctor",
-    admin: "Admin"
+    patient: 'Patient',
+    doctor: 'Doctor',
+    admin: 'Admin',
   };
-  const getActivityColor = (description) => {
-    if (description.toLowerCase().includes("profile")) return "green";
-    if (description.toLowerCase().includes("symptom")) return "blue";
-    if (description.toLowerCase().includes("prescribed")) return "purple";
-    return "gray";
+  const getActivityColor = description => {
+    if (description.toLowerCase().includes('profile')) return 'green';
+    if (description.toLowerCase().includes('symptom')) return 'blue';
+    if (description.toLowerCase().includes('prescribed')) return 'purple';
+    return 'gray';
   };
-  
+
   return (
     <div className="profile-container">
       <div className="profile-header">
-     
         <div className="profile-info">
-          <h2>{first_name} {last_name}</h2>
+          <h2>
+            {first_name} {last_name}
+          </h2>
           <span className="active-badge">Active {roleLabel[role]}</span>
           <div className="edit-profile-btn-container">
             <button className="edit-profile-btn">
@@ -92,49 +93,73 @@ const Profile = () => {
       <div className="profile-grid">
         <div className="card">
           <h3>Personal Information</h3>
-          <p><strong>Full Name:</strong> {first_name} {last_name}</p>
-          <p><strong>Email:</strong> {email}</p>
-          <p><strong>Phone:</strong> {phone}</p>
-          {(role === "patient" || role === "doctor" ) && (
-            <p><strong>Address:</strong> {address}</p>
-          )}
-          {role === "patient" && (
+          <p>
+            <strong>Full Name:</strong> {first_name} {last_name}
+          </p>
+          <p>
+            <strong>Email:</strong> {email}
+          </p>
+          <p>
+            <strong>Phone:</strong> {phone}
+          </p>
+          {(role === 'patient' || role === 'doctor') && (
             <p>
-              <strong>Date of Birth:</strong>{" "}
-              {birth_date ? new Date(birth_date).toLocaleDateString() : "N/A"}
+              <strong>Address:</strong> {address}
+            </p>
+          )}
+          {role === 'patient' && (
+            <p>
+              <strong>Date of Birth:</strong>{' '}
+              {birth_date ? new Date(birth_date).toLocaleDateString() : 'N/A'}
             </p>
           )}
         </div>
 
-        {role === "patient" && (
+        {role === 'patient' && (
           <div className="card">
             <h3>Medical Information</h3>
-            <p><strong>Blood Type:</strong> {blood_type || "Unknown"}</p>
-            <p><strong>Height:</strong> {height} cm</p>
-            <p><strong>Weight:</strong> {weight} kg</p>
-            <p><strong>Allergies:</strong></p>
+            <p>
+              <strong>Blood Type:</strong> {blood_type || 'Unknown'}
+            </p>
+            <p>
+              <strong>Height:</strong> {height} cm
+            </p>
+            <p>
+              <strong>Weight:</strong> {weight} kg
+            </p>
+            <p>
+              <strong>Allergies:</strong>
+            </p>
             <div className="tags">
-              {allergies?.split(",").map((tag, index) => (
-                <span className="tag" key={index}>{tag.trim()}</span>
+              {allergies?.split(',').map((tag, index) => (
+                <span className="tag" key={index}>
+                  {tag.trim()}
+                </span>
               ))}
             </div>
           </div>
         )}
 
-        {role === "doctor" && (
+        {role === 'doctor' && (
           <div className="card">
             <h3>Professional Information</h3>
-            <p><strong>Specialization:</strong> {specialization}</p>
-            <p><strong>License Number:</strong> {license_number}</p>
+            <p>
+              <strong>Specialization:</strong> {specialization}
+            </p>
+            <p>
+              <strong>License Number:</strong> {license_number}
+            </p>
           </div>
         )}
 
-        {role === "admin" && (
+        {role === 'admin' && (
           <div className="card">
             <h3>Admin Role Summary</h3>
             <p>This account has administrative privileges.</p>
             <p>You can access system-wide stats and manage users via the admin dashboard.</p>
-            <Link to="/admin" className="admin-dashboard-link">Go to Dashboard</Link>
+            <Link to="/admin" className="admin-dashboard-link">
+              Go to Dashboard
+            </Link>
           </div>
         )}
 
@@ -144,8 +169,8 @@ const Profile = () => {
             {activities.length > 0 ? (
               activities.map((a, i) => (
                 <li key={i}>
-                <span className={`activity-dot ${getActivityColor(a.description)}`} />
-{a.description}
+                  <span className={`activity-dot ${getActivityColor(a.description)}`} />
+                  {a.description}
 
                   <span className="timestamp">{new Date(a.created_at).toLocaleString()}</span>
                 </li>

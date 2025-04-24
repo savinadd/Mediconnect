@@ -1,63 +1,58 @@
-import React, { useState, useEffect } from "react";
-import "../styles/Symptoms.css";
-import toast from "react-hot-toast";
+import React, { useState, useEffect } from 'react';
+import '../styles/Symptoms.css';
+import toast from 'react-hot-toast';
 
 const Symptoms = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    severity: "",
-    duration: "",
-    notes: ""
+    name: '',
+    description: '',
+    severity: '',
+    duration: '',
+    notes: '',
   });
 
   const [history, setHistory] = useState([]);
 
-  const handleInputChange = (e) => {
-    setFormData((f) => ({ ...f, [e.target.name]: e.target.value }));
+  const handleInputChange = e => {
+    setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
   };
 
-  const handleSymptomSubmit = async (e) => {
+  const handleSymptomSubmit = async e => {
     e.preventDefault();
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/symptoms/log`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/symptoms/log`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(formData),
+      });
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Symptom logged!");
-        setFormData({ name: "", description: "", severity: "", duration: "", notes: "" });
+        toast.success('Symptom logged!');
+        setFormData({ name: '', description: '', severity: '', duration: '', notes: '' });
         fetchSymptomHistory();
       } else {
-        const msg =
-          Array.isArray(data.message) ? data.message.join(" • ") : data.message;
-        toast.error(msg || "Error logging symptom");
+        const msg = Array.isArray(data.message) ? data.message.join(' • ') : data.message;
+        toast.error(msg || 'Error logging symptom');
       }
     } catch (err) {
-      console.error("Symptom Log Error:", err);
-      toast.error(err.message || "Error logging symptom");
+      console.error('Symptom Log Error:', err);
+      toast.error(err.message || 'Error logging symptom');
     }
   };
 
   const fetchSymptomHistory = async () => {
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/symptoms/history`,
-        { credentials: "include" }
-      );
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/symptoms/history`, {
+        credentials: 'include',
+      });
       const data = await res.json();
       if (res.ok) setHistory(data);
     } catch (err) {
-      console.error("Error fetching symptom history:", err);
-      toast.error("Could not load history");
+      console.error('Error fetching symptom history:', err);
+      toast.error('Could not load history');
     }
   };
 
@@ -88,12 +83,7 @@ const Symptoms = () => {
         </div>
 
         <div className="form-group">
-          <select
-            name="severity"
-            value={formData.severity}
-            onChange={handleInputChange}
-            required
-          >
+          <select name="severity" value={formData.severity} onChange={handleInputChange} required>
             <option value="">Select Severity</option>
             <option value="Mild">Mild</option>
             <option value="Moderate">Moderate</option>
@@ -162,7 +152,7 @@ const Symptoms = () => {
             <strong>Symptom:</strong> {entry.symptom_name}
           </p>
           <p>
-            <strong>Severity:</strong>{" "}
+            <strong>Severity:</strong>{' '}
             <span className={`severity-tag ${entry.severity?.toLowerCase()}`}>
               {entry.severity}
             </span>

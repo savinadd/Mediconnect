@@ -1,5 +1,10 @@
-const db = require("../db");
-const { InternalServerError, NotFoundError, BadRequestError, AppError } = require("../utils/errors");
+const db = require('../db');
+const {
+  InternalServerError,
+  NotFoundError,
+  BadRequestError,
+  AppError,
+} = require('../utils/errors');
 
 const generateRoomId = (a, b) => {
   const [x, y] = [Number(a), Number(b)].sort((u, v) => u - v);
@@ -20,18 +25,21 @@ async function getDoctorsForPatient(req, res) {
     res.json(result.rows);
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new InternalServerError("Server error upon fetching doctors")
+    throw new InternalServerError('Server error upon fetching doctors');
   }
 }
 
 async function getChattedDoctorUserIds(req, res) {
   const patientUserId = req.user.userId;
   try {
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT DISTINCT receiver_id AS doctor_user_id
       FROM chat_messages
       WHERE sender_id = $1 AND sender_role = 'patient'
-    `, [patientUserId]);
+    `,
+      [patientUserId]
+    );
     res.json(result.rows.map(r => r.doctor_user_id));
   } catch (err) {
     if (err instanceof AppError) throw err;
@@ -43,16 +51,14 @@ async function getPatientsForDoctor(req, res) {
   const doctorUserId = req.user.userId;
 
   try {
-    const d = await db.query(
-      `SELECT id FROM doctors WHERE user_id = $1`,
-      [doctorUserId]
-    );
+    const d = await db.query(`SELECT id FROM doctors WHERE user_id = $1`, [doctorUserId]);
     if (!d.rows.length) {
-      throw new NotFoundError("Doctor not found");
+      throw new NotFoundError('Doctor not found');
     }
     const doctorId = d.rows[0].id;
 
-    const result = await db.query(`
+    const result = await db.query(
+      `
       WITH contacts AS (
         SELECT pr.patient_id AS patient_user_id
         FROM prescriptions pr
@@ -79,7 +85,9 @@ async function getPatientsForDoctor(req, res) {
       FROM contacts c
       JOIN patients p ON p.user_id = c.patient_user_id
       JOIN users    u ON u.id       = c.patient_user_id
-    `, [doctorId, doctorUserId]);
+    `,
+      [doctorId, doctorUserId]
+    );
 
     res.json(result.rows);
   } catch (err) {
@@ -91,21 +99,23 @@ async function getPatientsForDoctor(req, res) {
 async function getChattedPatientUserIds(req, res) {
   const doctorUserId = req.user.userId;
   try {
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT DISTINCT
         CASE WHEN sender_role='doctor' THEN receiver_id
              ELSE sender_id
         END AS patient_user_id
       FROM chat_messages
       WHERE sender_id = $1 OR receiver_id = $1
-    `, [doctorUserId]);
+    `,
+      [doctorUserId]
+    );
     res.json(result.rows.map(r => r.patient_user_id));
   } catch (err) {
     if (err instanceof AppError) throw err;
-   throw new InternalServerError();
+    throw new InternalServerError();
   }
 }
-
 
 async function getChatMessages(req, res) {
   const { roomId } = req.params;
@@ -126,7 +136,7 @@ async function getChatMessages(req, res) {
 
 async function getUnreadMessages(req, res) {
   const userId = Number(req.query.userId);
-  if (!userId) throw new BadRequestError("Missing userId");
+  if (!userId) throw new BadRequestError('Missing userId');
 
   try {
     const result = await db.query(
@@ -151,5 +161,5 @@ module.exports = {
   getPatientsForDoctor,
   getChattedPatientUserIds,
   getChatMessages,
-  getUnreadMessages
+  getUnreadMessages,
 };

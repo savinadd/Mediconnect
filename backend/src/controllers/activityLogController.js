@@ -1,11 +1,12 @@
-const db = require("../db");
-const { InternalServerError, AppError } = require("../utils/errors");
+const db = require('../db');
+const { InternalServerError, AppError } = require('../utils/errors');
 
 const logActivity = async (userId, role, description) => {
-  await db.query(
-    "INSERT INTO activity_logs (user_id, role, description) VALUES ($1, $2, $3)",
-    [userId, role, description]
-  );
+  await db.query('INSERT INTO activity_logs (user_id, role, description) VALUES ($1, $2, $3)', [
+    userId,
+    role,
+    description,
+  ]);
 };
 
 const getRecentActivities = async (req, res) => {

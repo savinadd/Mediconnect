@@ -1,23 +1,24 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { Toaster } from "react-hot-toast";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
+import { Toaster } from 'react-hot-toast';
 
-import Home from "./pages/Home";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Symptoms from "./pages/Symptoms";
-import Prescriptions from "./pages/Prescription";
-import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile";
-import SetupProfile from "./pages/SetupProfile";
-import ChatTest from "./pages/Chat";
-import DoctorChat from "./pages/DoctorChat";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import BookAppointment from "./pages/BookAppointment";
-import DoctorSchedule from "./pages/DoctorSchedule";
+import Home from './pages/Home';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import Symptoms from './pages/Symptoms';
+import Prescriptions from './pages/Prescription';
+import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
+import SetupProfile from './pages/SetupProfile';
+import ChatTest from './pages/Chat';
+import DoctorChat from './pages/DoctorChat';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import BookAppointment from './pages/BookAppointment';
+import DoctorSchedule from './pages/DoctorSchedule';
+import AboutUs from './pages/AboutUs';
 
 export default function App() {
   return (
@@ -25,12 +26,14 @@ export default function App() {
       <Router>
         <Toaster
           toastOptions={{
-            style: { border: "2px solid black", padding: "16px", fontSize: "20px" },
+            style: { border: '2px solid black', padding: '16px', fontSize: '20px' },
           }}
         />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
+
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
@@ -38,7 +41,7 @@ export default function App() {
           <Route
             path="/appointments/book"
             element={
-              <ProtectedRoute allowedRoles={["patient"]}>
+              <ProtectedRoute allowedRoles={['patient']}>
                 <BookAppointment />
               </ProtectedRoute>
             }
@@ -48,7 +51,7 @@ export default function App() {
           <Route
             path="/appointments/schedule"
             element={
-              <ProtectedRoute allowedRoles={["doctor"]}>
+              <ProtectedRoute allowedRoles={['doctor']}>
                 <DoctorSchedule />
               </ProtectedRoute>
             }
@@ -58,7 +61,7 @@ export default function App() {
           <Route
             path="/symptoms"
             element={
-              <ProtectedRoute allowedRoles={["patient","doctor","admin"]}>
+              <ProtectedRoute allowedRoles={['patient', 'doctor', 'admin']}>
                 <Symptoms />
               </ProtectedRoute>
             }
@@ -66,7 +69,7 @@ export default function App() {
           <Route
             path="/prescriptions"
             element={
-              <ProtectedRoute allowedRoles={["patient","doctor"]}>
+              <ProtectedRoute allowedRoles={['patient', 'doctor']}>
                 <Prescriptions />
               </ProtectedRoute>
             }
@@ -74,7 +77,7 @@ export default function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute allowedRoles={["patient","doctor","admin"]}>
+              <ProtectedRoute allowedRoles={['patient', 'doctor', 'admin']}>
                 <Profile />
               </ProtectedRoute>
             }
@@ -82,7 +85,7 @@ export default function App() {
           <Route
             path="/edit-profile"
             element={
-              <ProtectedRoute allowedRoles={["patient","doctor","admin"]}>
+              <ProtectedRoute allowedRoles={['patient', 'doctor', 'admin']}>
                 <EditProfile />
               </ProtectedRoute>
             }
@@ -91,7 +94,7 @@ export default function App() {
           <Route
             path="/chat"
             element={
-              <ProtectedRoute allowedRoles={["patient"]}>
+              <ProtectedRoute allowedRoles={['patient']}>
                 <ChatTest />
               </ProtectedRoute>
             }
@@ -99,7 +102,7 @@ export default function App() {
           <Route
             path="/doctor-chat"
             element={
-              <ProtectedRoute allowedRoles={["doctor"]}>
+              <ProtectedRoute allowedRoles={['doctor']}>
                 <DoctorChat />
               </ProtectedRoute>
             }
@@ -107,7 +110,7 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute allowedRoles={["admin"]}>
+              <ProtectedRoute allowedRoles={['admin']}>
                 <AdminDashboard />
               </ProtectedRoute>
             }

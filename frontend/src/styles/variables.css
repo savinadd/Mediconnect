@@ -1,0 +1,24 @@
+/* variables.css */
+:root {
+    /* Darkest shadows & text */
+    --color-darkest:  #022b3a;
+    /* Dark backgrounds, hover states */
+    --color-darker:   #03045e;
+    /* Primary brand accent */
+    --color-primary:  #1f7a8c;
+    /* Secondary accent */
+    --color-secondary:#16697a;
+    /* Light background fills */
+    --color-light:    #bfdbf7;
+    /* Lighter background fills */
+    --color-lighter:  #e1e5f2;
+    /* Very pale backgrounds */
+    --color-lightest: #edfafd;
+    /* Pure white */
+    --color-white:    #ffffff;
+  
+    /* Text contrasts */
+    --text-dark:  #000000;
+    --text-light: #ffffff;
+  }
+  

@@ -1,47 +1,46 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import "../styles/SetupProfile.css";
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import '../styles/SetupProfile.css';
 
-const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 const SetupProfile = () => {
   const { login } = useContext(AuthContext);
   const [role, setRole] = useState(null);
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    phone: "",
-    address: "",
-    birth_date: "",
-    blood_type: "",   
-    height: "",
-    weight: "",
-    allergies: "",
-    specialization: "",
-    license_number: "",
-    government_id: "",
-    department: "",
+    first_name: '',
+    last_name: '',
+    phone: '',
+    address: '',
+    birth_date: '',
+    blood_type: '',
+    height: '',
+    weight: '',
+    allergies: '',
+    specialization: '',
+    license_number: '',
+    government_id: '',
+    department: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRegistrationRole = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/auth/registration-role`,
-          { credentials: "include" }
-        );
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/registration-role`, {
+          credentials: 'include',
+        });
         if (res.ok) {
           const { role } = await res.json();
           setRole(role);
         } else {
-          setError("Unable to retrieve registration details. Please log in again.");
+          setError('Unable to retrieve registration details. Please log in again.');
         }
       } catch (err) {
         console.error(err);
-        setError("Server error. Please try again later.");
+        setError('Server error. Please try again later.');
       }
     };
     fetchRegistrationRole();
@@ -56,21 +55,21 @@ const SetupProfile = () => {
     e.preventDefault();
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile/setup`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
       const data = await res.json();
       if (res.ok) {
         login(data.user.id, data.user.role);
-        navigate("/profile");
+        navigate('/profile');
       } else {
-        setError(data.message || "Failed to save profile");
+        setError(data.message || 'Failed to save profile');
       }
     } catch (err) {
       console.error(err);
-      setError("Something went wrong");
+      setError('Something went wrong');
     }
   };
 
@@ -79,11 +78,14 @@ const SetupProfile = () => {
     <div className="setup-container">
       <div className="setup-box">
         <h2>Complete Your Profile</h2>
-        {error && <p className="setup-message" style={{ color: "red" }}>{error}</p>}
-        
+        {error && (
+          <p className="setup-message" style={{ color: 'red' }}>
+            {error}
+          </p>
+        )}
+
         {role ? (
           <form onSubmit={handleSubmit}>
-        
             <input
               className="setup-input"
               type="text"
@@ -121,7 +123,7 @@ const SetupProfile = () => {
               required
             />
 
-            {role === "patient" && (
+            {role === 'patient' && (
               <>
                 <input
                   className="setup-input"
@@ -131,9 +133,20 @@ const SetupProfile = () => {
                   onChange={handleChange}
                   required
                 />
-                <select name="blood_type" value={formData.blood_type} onChange={handleChange} required>
-                  <option value="" disabled>Select Blood Type</option>
-                  {BLOOD_TYPES.map(bt => <option key={bt} value={bt}>{bt}</option>)}
+                <select
+                  name="blood_type"
+                  value={formData.blood_type}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select Blood Type
+                  </option>
+                  {BLOOD_TYPES.map(bt => (
+                    <option key={bt} value={bt}>
+                      {bt}
+                    </option>
+                  ))}
                 </select>
                 <input
                   className="setup-input"
@@ -174,7 +187,7 @@ const SetupProfile = () => {
               </>
             )}
 
-            {role === "doctor" && (
+            {role === 'doctor' && (
               <>
                 <input
                   className="setup-input"
@@ -196,7 +209,6 @@ const SetupProfile = () => {
                 />
               </>
             )}
-
 
             <button type="submit" className="setup-button">
               Save Profile

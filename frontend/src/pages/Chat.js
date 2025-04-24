@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { io } from 'socket.io-client';
-import "../styles/Chat.css";
-import { AuthContext } from "../context/AuthContext";
+import '../styles/Chat.css';
+import { AuthContext } from '../context/AuthContext';
 
 const socket = io(process.env.REACT_APP_BACKEND_URL);
-
 
 const generateRoomId = (a, b) => {
   const [x, y] = [Number(a), Number(b)].sort((u, v) => u - v);
@@ -24,7 +23,7 @@ const Chat = () => {
   useEffect(() => {
     if (!patientUserId) return;
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/chatted-doctors`, {
-      credentials: 'include'
+      credentials: 'include',
     })
       .then(r => r.json())
       .then(setChattedDoctorUserIds)
@@ -35,14 +34,13 @@ const Chat = () => {
     if (!patientUserId) return;
     const fetchDoctors = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/chat/doctors`,
-          { credentials: 'include' }
-        );
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/doctors`, {
+          credentials: 'include',
+        });
         const data = await res.json();
         setDoctors(data.filter(d => d.user_id !== patientUserId));
       } catch (err) {
-        console.error("Failed to fetch doctors:", err);
+        console.error('Failed to fetch doctors:', err);
       }
     };
     fetchDoctors();
@@ -53,7 +51,7 @@ const Chat = () => {
   useEffect(() => {
     if (!patientUserId) return;
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/unread?userId=${patientUserId}`, {
-      credentials: 'include'
+      credentials: 'include',
     })
       .then(r => r.json())
       .then(data => {
@@ -68,7 +66,7 @@ const Chat = () => {
     socket.emit('join-room', room, patientUserId);
     setUnreadCounts(u => ({ ...u, [room]: 0 }));
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat/history/room/${room}`, {
-      credentials: 'include'
+      credentials: 'include',
     })
       .then(r => r.json())
       .then(setMessages)
@@ -92,7 +90,7 @@ const Chat = () => {
       message,
       senderRole: 'patient',
       senderId: patientUserId,
-      receiverId: doctorUserId
+      receiverId: doctorUserId,
     });
     setMessage('');
   };
@@ -109,7 +107,7 @@ const Chat = () => {
 
   return (
     <div className="chat-container">
-      <h2>Patient Chat Interface</h2>
+      <h2>Chat With a Doctor!</h2>
       <div className="chat-select-wrapper">
         <label htmlFor="doctorSelect">Select Doctor:</label>
         <select
@@ -120,7 +118,9 @@ const Chat = () => {
             setSelectedDoctor(doc || null);
           }}
         >
-          <option value="" disabled>-- Choose a doctor --</option>
+          <option value="" disabled>
+            -- Choose a doctor --
+          </option>
           <optgroup label="🗨️ Chatted Doctors">
             {doctors
               .filter(d => chattedDoctorUserIds.includes(d.user_id))
@@ -142,7 +142,7 @@ const Chat = () => {
                   Dr. {d.first_name} {d.last_name} – {d.specialization} ({d.address})
                 </option>
               ))}
-      
+
             <option disabled style={{ height: '1.5em' }}></option>
           </optgroup>
         </select>
@@ -151,14 +151,11 @@ const Chat = () => {
       {selectedDoctor && (
         <>
           <div className="chat-box">
-            {messages.map((m,i) => {
+            {messages.map((m, i) => {
               const mine = String(m.sender_id) === String(patientUserId);
               return (
-                <div
-                  key={i}
-                  className={`chat-message-wrapper ${mine? "sent":"received"}`}
-                >
-                  <div className={`chat-bubble ${mine? "sent":"received"}`}>
+                <div key={i} className={`chat-message-wrapper ${mine ? 'sent' : 'received'}`}>
+                  <div className={`chat-bubble ${mine ? 'sent' : 'received'}`}>
                     <div className="chat-sender">{m.sender_role}</div>
                     <div>{m.message}</div>
                   </div>
