@@ -19,6 +19,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import BookAppointment from './pages/BookAppointment';
 import DoctorSchedule from './pages/DoctorSchedule';
 import AboutUs from './pages/AboutUs';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   return (
@@ -116,6 +117,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>
