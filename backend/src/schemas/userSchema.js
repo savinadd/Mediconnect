@@ -1,10 +1,17 @@
 const { z } = require('zod');
 
 const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+const nameRegex = /^[A-Za-z'-]+$/;
 
 const patientProfileSchema = z.object({
-  first_name: z.string().min(1, 'First name is required'),
-  last_name: z.string().min(1, 'Last name is required'),
+  first_name: z
+    .string()
+    .min(1, 'First name is required')
+    .regex(nameRegex, { message: 'First name may only contain letters, apostrophes, and hyphens' }),
+  last_name: z
+    .string()
+    .min(1, 'Last name is required')
+    .regex(nameRegex, { message: 'Last name may only contain letters, apostrophes, and hyphens' }),
   phone: z.string().min(1, 'Phone is required'),
   address: z.string().min(1, 'Address is required'),
   birth_date: z.string().min(1, 'Birth date is required'),
@@ -18,8 +25,14 @@ const patientProfileSchema = z.object({
 });
 
 const doctorProfileSchema = z.object({
-  first_name: z.string().min(1, 'First name is required'),
-  last_name: z.string().min(1, 'Last name is required'),
+  first_name: z
+    .string()
+    .min(1, 'First name is required')
+    .regex(nameRegex, { message: 'First name may only contain letters, apostrophes, and hyphens' }),
+  last_name: z
+    .string()
+    .min(1, 'Last name is required')
+    .regex(nameRegex, { message: 'Last name may only contain letters, apostrophes, and hyphens' }),
   phone: z.string().min(1, 'Phone is required'),
   address: z.string().min(1, 'Address is required'),
   specialization: z.string().min(1, 'Specialization is required'),
@@ -27,8 +40,14 @@ const doctorProfileSchema = z.object({
 });
 
 const adminProfileSchema = z.object({
-  first_name: z.string().min(1, 'First name is required'),
-  last_name: z.string().min(1, 'Last name is required'),
+  first_name: z
+    .string()
+    .min(1, 'First name is required')
+    .regex(nameRegex, { message: 'First name may only contain letters, apostrophes, and hyphens' }),
+  last_name: z
+    .string()
+    .min(1, 'Last name is required')
+    .regex(nameRegex, { message: 'Last name may only contain letters, apostrophes, and hyphens' }),
   phone: z.string().min(1, 'Phone is required'),
 });
 

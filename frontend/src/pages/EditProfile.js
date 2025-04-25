@@ -80,6 +80,7 @@ const EditProfile = () => {
       }
     } catch (err) {
       setErrors([{ msg: 'Server error, please try again.' }]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

@@ -1,5 +1,5 @@
 const db = require('../db');
-const { BadRequestError, NotFoundError } = require('../utils/errors');
+const { BadRequestError, NotFoundError, InternalServerError } = require('../utils/errors');
 
 async function addAvailability(req, res) {
   const userId = req.user.userId;
@@ -65,9 +65,7 @@ async function getAvailability(req, res) {
 
 async function bookAppointment(req, res) {
   const { availabilityId } = req.body;
-  if (!availabilityId) {
-    throw new BadRequestError('Missing availabilityId in request body');
-  }
+  if (!availabilityId) throw new BadRequestError('Missing availabilityId in request body');
 
   const slotResult = await db.query(
     `SELECT doctor_id, start_time, end_time
@@ -76,15 +74,11 @@ async function bookAppointment(req, res) {
     [availabilityId]
   );
   const slot = slotResult.rows[0];
-  if (!slot) {
-    throw new NotFoundError('Slot not found');
-  }
+  if (!slot) throw new NotFoundError('Slot not found');
 
   const patResult = await db.query(`SELECT id FROM patients WHERE user_id = $1`, [req.user.userId]);
   const patientId = patResult.rows[0]?.id;
-  if (!patientId) {
-    throw new NotFoundError('Patient not found');
-  }
+  if (!patientId) throw new NotFoundError('Patient not found');
 
   await db.query(
     `INSERT INTO appointments (patient_id, doctor_id, start_time, end_time)
@@ -114,6 +108,7 @@ async function getMyAppointments(req, res) {
   );
   res.json(rows);
 }
+
 async function approveAppointment(req, res) {
   const { id } = req.params;
 
@@ -131,17 +126,36 @@ async function approveAppointment(req, res) {
 
 async function cancelAppointment(req, res) {
   const { id } = req.params;
+  const { userId, role } = req.user;
+
+  if (role === 'patient') {
+    const pat = await db.query('SELECT id FROM patients WHERE user_id = $1', [userId]);
+    const patientId = pat.rows[0]?.id;
+    if (!patientId) throw new NotFoundError('Patient not found');
+
+    const del = await db.query(
+      `DELETE FROM appointments
+         WHERE id = $1
+           AND patient_id = $2
+       RETURNING id`,
+      [id, patientId]
+    );
+    if (!del.rows.length) throw new InternalServerError('Cannot cancel that appointment');
+    return res.json({ message: 'Appointment cancelled' });
+  }
+
   const upd = await db.query(
     `UPDATE appointments
-         SET status='cancelled'
-       WHERE id=$1
-         AND doctor_id=(SELECT id FROM doctors WHERE user_id=$2)
+         SET status = 'cancelled'
+       WHERE id = $1
+         AND doctor_id = (SELECT id FROM doctors WHERE user_id = $2)
        RETURNING id`,
-    [id, req.user.userId]
+    [id, userId]
   );
-  if (!upd.rows.length) throw new NotFoundError('Appointment not found');
-  res.json({ message: 'Appointment rejected' });
+  if (!upd.rows.length) throw new NotFoundError('Appointment not found or not yours to cancel');
+  return res.json({ message: 'Appointment cancelled' });
 }
+
 async function getMyPatientAppointments(req, res) {
   const userId = req.user.userId;
   const p = await db.query('SELECT id FROM patients WHERE user_id=$1', [userId]);
@@ -161,6 +175,7 @@ async function getMyPatientAppointments(req, res) {
   );
   res.json(rows);
 }
+
 async function deleteAvailability(req, res) {
   const doctorUserId = req.user.userId;
   const slotId = req.params.id;
@@ -172,11 +187,10 @@ async function deleteAvailability(req, res) {
          RETURNING id`,
     [slotId, doctorUserId]
   );
-  if (!upd.rows.length) {
-    throw new NotFoundError('Availability slot not found or not owned by you');
-  }
+  if (!upd.rows.length) throw new NotFoundError('Availability slot not found or not owned by you');
   res.json({ message: 'Availability deleted' });
 }
+
 module.exports = {
   addAvailability,
   getMyAvailability,

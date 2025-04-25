@@ -2,12 +2,6 @@ import React, { useState } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-/**
- * A thin wrapper around react-big-calendar that
- * - manages current view & date in state
- * - exposes a default height of 80vh
- * - enables drill-down on dates
- */
 export default function CalendarWrapper({
   localizer,
   events,
@@ -18,9 +12,9 @@ export default function CalendarWrapper({
   startAccessor = 'start',
   endAccessor = 'end',
   views = ['month', 'week', 'day'],
-  defaultView = 'week',
+  defaultView = 'month',
   defaultDate = new Date(),
-  style = { height: '80vh' },
+  style = { height: '70vh' },
   toolbar = true,
   drilldownView = 'day',
 }) {

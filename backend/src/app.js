@@ -19,7 +19,6 @@ const aptRoutes = require('./routes/appointmentRoutes');
 const { AppError, ValidationError, NotFoundError } = require('./utils/errors');
 
 const app = express();
-
 app.use(helmet());
 app.use(hpp());
 
@@ -44,7 +43,6 @@ app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/drugs', drugRoutes);
 app.use('/api/symptoms', symptomRoutes);
 app.use('/api/activity', activityRoutes);
-
 app.use('/api/chat', chatRoutes);
 app.use('/api/appointments', aptRoutes);
 

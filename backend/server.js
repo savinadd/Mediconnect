@@ -5,6 +5,7 @@ const socketIo = require('socket.io');
 const cors = require('cors');
 const db = require('./src/db');
 const appRoutes = require('./src/app');
+const logger = require('./src/utils/logger');
 
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const PORT = process.env.PORT || 3001;
@@ -30,11 +31,11 @@ const io = socketIo(server, {
 });
 
 io.on('connection', socket => {
-  console.log('User connected:', socket.id);
+  logger.info('User connected: ' + socket.id);
 
   socket.on('join-room', async (roomId, userId) => {
     socket.join(roomId);
-    console.log(`Socket ${socket.id} joined room ${roomId}`);
+    logger.info(`Socket ${socket.id} joined room ${roomId}`);
     try {
       await db.query(
         `UPDATE chat_messages
@@ -45,12 +46,12 @@ io.on('connection', socket => {
         [roomId, userId]
       );
     } catch (err) {
-      console.error('Failed to mark messages as read:', err);
+      logger.error('Failed to mark messages as read:', err);
     }
   });
 
   socket.on('send-message', async ({ roomId, message, senderRole, senderId, receiverId }) => {
-    console.log('Incoming message:', { roomId, message, senderRole, senderId, receiverId });
+    logger.info('Incoming message:', { roomId, message, senderRole, senderId, receiverId });
     try {
       await db.query(
         `INSERT INTO chat_messages
@@ -66,7 +67,7 @@ io.on('connection', socket => {
         timestamp: new Date().toISOString(),
       });
     } catch (err) {
-      console.error('DB Insert Error:', err);
+      logger.error('DB Insert Error:', err);
     }
   });
 
@@ -75,13 +76,13 @@ io.on('connection', socket => {
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+    logger.info('User disconnected:' + socket.id);
   });
 });
 
 if (require.main === module) {
   server.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    logger.info(`Server running on port ${PORT}`);
   });
 }
 

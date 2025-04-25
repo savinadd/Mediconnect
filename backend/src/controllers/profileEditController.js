@@ -118,7 +118,8 @@ const editUserProfile = async (req, res) => {
   } catch (err) {
     console.error('Edit profile error:', err);
     if (err.errors) {
-      res.status(400).json({ errors: err.errors });
+      const formatted = err.errors.map(e => ({ msg: e.message }));
+      return res.status(400).json({ errors: formatted });
     } else {
       res.status(500).json({ message: 'Server error during profile update' });
     }

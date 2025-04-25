@@ -162,4 +162,5 @@ module.exports = {
   getChattedPatientUserIds,
   getChatMessages,
   getUnreadMessages,
+  generateRoomId,
 };

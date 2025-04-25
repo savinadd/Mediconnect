@@ -1,5 +1,6 @@
 const db = require('../db');
 const { InternalServerError, AppError } = require('../utils/errors');
+const logger = require('../utils/logger.js');
 
 const getAdminSummary = async (req, res) => {
   try {
@@ -99,7 +100,7 @@ const getAdmins = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { userId } = req.params;
-  console.log('Delete request received for user ID:', userId);
+  logger.warn('Delete request received for user ID:', userId);
 
   try {
     const [pat, doc, adm] = await Promise.all([

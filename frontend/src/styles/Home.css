@@ -105,7 +105,6 @@
   transform: scale(1.05);
 }
 
-/* Mobile Styles */
 @media (max-width: 768px) {
   .home-container {
     flex-direction: column;
@@ -145,7 +144,6 @@
   }
 }
 
-/* Animations */
 @keyframes fadeInPage {
   0% {
     opacity: 0;

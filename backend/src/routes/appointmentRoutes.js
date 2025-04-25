@@ -48,7 +48,7 @@ router.put(
 router.put(
   '/:id/cancel',
   authenticateToken,
-  authorizeRoles('doctor'),
+  authorizeRoles('doctor', 'patient'),
   asyncHandler(ctrl.cancelAppointment)
 );
 router.delete(

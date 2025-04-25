@@ -158,7 +158,6 @@
   animation: fadeHighlight 2s ease-in-out;
 }
 
-/* Animations */
 @keyframes fadeHighlight {
   0% { background-color: #d1e7dd; }
   100% { background-color: transparent; }
@@ -197,7 +196,6 @@
   }
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
   .chat-container {
     padding: 1.5rem 1rem;

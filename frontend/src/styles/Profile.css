@@ -183,7 +183,6 @@
   color: #4f46e5;
 }
 
-/* Animations */
 @keyframes fadeSlideDown {
   from {
     opacity: 0;
@@ -215,7 +214,6 @@
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .profile-info h2 {
     font-size: 22px;

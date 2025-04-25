@@ -92,7 +92,7 @@ export default function DoctorSchedule() {
           color = 'gray';
           title = `Cancelled: ${r.patient_name}`;
         } else {
-          color = '#fd7e14'; // pending
+          color = '#fd7e14'; 
           title = `Pending: ${r.patient_name}`;
         }
         return {
@@ -152,7 +152,7 @@ export default function DoctorSchedule() {
       }
     } else if (event.type === 'request') {
       if (event.status === 'pending') {
-        const ok = await confirmDialog('Approve this appointment?\nNo = Reject');
+        const ok = await confirmDialog('Approve this appointment?');
         const action = ok ? 'approve' : 'cancel';
         try {
           const res = await fetch(

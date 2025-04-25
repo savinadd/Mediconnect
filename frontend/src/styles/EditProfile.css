@@ -131,7 +131,6 @@ select:focus {
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .edit-profile-container {
     padding: 80px 1rem 40px;

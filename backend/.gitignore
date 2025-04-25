@@ -26,3 +26,5 @@ Thumbs.db
 
 # OS-specific files
 *.swp
+
+coverage/

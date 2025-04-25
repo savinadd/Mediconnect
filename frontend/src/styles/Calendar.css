@@ -4,15 +4,81 @@
   box-sizing: border-box;
 }
 
-/* shrink toolbar and headers on small screens */
-@media (max-width: 768px) {
-  .calendar-container .rbc-toolbar button,
-  .book-container .rbc-toolbar button {
-    font-size: 0.75rem;
+.rbc-agenda-view {
+  width: 100% !important;
+}
+.rbc-agenda-view table {
+  width: 100% !important;
+  font-size: 0.9rem;
+  border-collapse: collapse;
+}
+.rbc-agenda-view th,
+.rbc-agenda-view td {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+}
+
+@media (max-width: 767px) {
+  .rbc-time-view {
+    display: none !important;
+  }
+
+  .calendar-container,
+  .book-container {
+    padding: 1rem;
+  }
+
+  .rbc-toolbar button {
+    font-size: 0.8rem;
     padding: 0.25rem 0.5rem;
   }
-  .calendar-container .rbc-header,
-  .book-container .rbc-header {
-    font-size: 0.75rem;
-  }
+}
+
+.rbc-toolbar {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+}
+
+.confirm-toast {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  justify-content: center;
+}
+
+.confirm-buttons button {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.confirm-buttons button.yes {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.confirm-buttons button.yes:hover {
+  background-color: #0b5ed7;
+}
+
+.confirm-buttons button.no {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.confirm-buttons button.no:hover {
+  background-color: #5c636a;
 }

@@ -1,5 +1,6 @@
-import fetch from 'node-fetch';
-import db from '../db/index.js';
+const fetch = require('node-fetch');
+const db = require('../db/index.js');
+const logger = require('../utils/logger.js');
 
 const fetchAndStoreDrugs = async () => {
   const res = await fetch('https://rxnav.nlm.nih.gov/REST/displaynames.json');
@@ -16,7 +17,7 @@ const fetchAndStoreDrugs = async () => {
     }
   }
 
-  console.log('Drug import completed.');
+  logger.info('Drug import completed.');
   process.exit(0);
 };
 

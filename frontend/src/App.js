@@ -107,6 +107,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          {/* Admin */}
           <Route
             path="/admin"
             element={
