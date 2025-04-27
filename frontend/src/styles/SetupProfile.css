@@ -1,10 +1,10 @@
 .setup-container {
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* changed from center */
-  padding: 6rem 1rem 2rem; /* top padding increased */
+  align-items: flex-start; 
+  padding: 6rem 1rem 2rem; 
   min-height: 100vh;
-  background-color: #f2f2f2;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='2500' height='1000' preserveAspectRatio='none' viewBox='0 0 2500 1000'%3e%3cg mask='url(%26quot%3b%23SvgjsMask2068%26quot%3b)' fill='none'%3e%3crect width='2500' height='1000' x='0' y='0' fill='url(%26quot%3b%23SvgjsRadialGradient2069%26quot%3b)'%3e%3c/rect%3e%3cpath d='M26 1000L1026 0L1660.5 0L660.5 1000z' fill='url(%26quot%3b%23SvgjsLinearGradient2070%26quot%3b)'%3e%3c/path%3e%3cpath d='M617 1000L1617 0L1969.5 0L969.5 1000z' fill='url(%26quot%3b%23SvgjsLinearGradient2070%26quot%3b)'%3e%3c/path%3e%3cpath d='M1197 1000L2197 0L2468.5 0L1468.5 1000z' fill='url(%26quot%3b%23SvgjsLinearGradient2070%26quot%3b)'%3e%3c/path%3e%3cpath d='M2468 1000L1468 0L1219 0L2219 1000z' fill='url(%26quot%3b%23SvgjsLinearGradient2071%26quot%3b)'%3e%3c/path%3e%3cpath d='M1938 1000L938 0L686 0L1686 1000z' fill='url(%26quot%3b%23SvgjsLinearGradient2071%26quot%3b)'%3e%3c/path%3e%3cpath d='M1296 1000L296 0L-455.5 0L544.5 1000z' fill='url(%26quot%3b%23SvgjsLinearGradient2071%26quot%3b)'%3e%3c/path%3e%3cpath d='M1550.6153140904162 1000L2500 50.61531409041618L2500 1000z' fill='url(%26quot%3b%23SvgjsLinearGradient2070%26quot%3b)'%3e%3c/path%3e%3cpath d='M0 1000L949.3846859095838 1000L 0 50.61531409041618z' fill='url(%26quot%3b%23SvgjsLinearGradient2071%26quot%3b)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask2068'%3e%3crect width='2500' height='1000' fill='white'%3e%3c/rect%3e%3c/mask%3e%3cradialGradient cx='100%25' cy='100%25' r='2692.58' gradientUnits='userSpaceOnUse' id='SvgjsRadialGradient2069'%3e%3cstop stop-color='rgba(195%2c 199%2c 230%2c 1)' offset='0.2'%3e%3c/stop%3e%3cstop stop-color='rgba(237%2c 250%2c 253%2c 1)' offset='1'%3e%3c/stop%3e%3c/radialGradient%3e%3clinearGradient x1='0%25' y1='100%25' x2='100%25' y2='0%25' id='SvgjsLinearGradient2070'%3e%3cstop stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3clinearGradient x1='100%25' y1='100%25' x2='0%25' y2='0%25' id='SvgjsLinearGradient2071'%3e%3cstop stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
   box-sizing: border-box;
   width: 100%;
   overflow-x: hidden;
@@ -12,11 +12,11 @@
 
 .setup-box {
   background-color: #ffffff;
-  padding: 2.5rem; /* slightly more padding inside */
+  padding: 2.5rem; 
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(3, 4, 94, 0.2); /* shadow now blueish and a bit stronger */
+  box-shadow: 0 0 10px rgba(3, 4, 94, 0.2); 
   width: 100%;
-  max-width: 550px; /* made it a bit wider */
+  max-width: 550px; 
   text-align: center;
   box-sizing: border-box;
 }
