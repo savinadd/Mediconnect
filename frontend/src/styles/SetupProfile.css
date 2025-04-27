@@ -50,8 +50,7 @@ select {
 select:focus {
   outline: none;
   border-color: #046BF1;
-  box-shadow: 0 0 0 2px rgba(3, 4, 94, 0.2); /* updated to match theme color */
-}
+  box-shadow: 0 0 0 2px rgba(3, 4, 94, 0.2); }
 
 .setup-button {
   width: 100%;
