@@ -22,13 +22,13 @@
   margin: 0;
   font-size: 28px;
   font-weight: 800;
-  color: #1e293b;
+  color: #03045E;
 }
 
 .active-badge {
   display: inline-block;
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: #b1eccd;
+  color: #053426;
   font-size: 13px;
   font-weight: 600;
   padding: 6px 14px;
@@ -41,7 +41,7 @@
 }
 
 .edit-profile-btn {
-  background: linear-gradient(to right, #6c63ff, #7b73ff);
+  background-color: #03045E;
   color: white;
   padding: 10px 20px;
   border-radius: 999px;
@@ -54,7 +54,7 @@
 }
 
 .edit-profile-btn:hover {
-  background: #564fd8;
+  background: #046BF1;
   transform: translateY(-2px);
 }
 
@@ -75,7 +75,7 @@
   background: white;
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
   animation: fadeInUp 0.5s ease;
 }

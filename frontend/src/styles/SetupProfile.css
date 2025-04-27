@@ -1,8 +1,8 @@
 .setup-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem 1rem;
+  align-items: flex-start; /* changed from center */
+  padding: 6rem 1rem 2rem; /* top padding increased */
   min-height: 100vh;
   background-color: #f2f2f2;
   box-sizing: border-box;
@@ -12,19 +12,19 @@
 
 .setup-box {
   background-color: #ffffff;
-  padding: 2rem;
+  padding: 2.5rem; /* slightly more padding inside */
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(3, 4, 94, 0.2); /* shadow now blueish and a bit stronger */
   width: 100%;
-  max-width: 500px;
+  max-width: 550px; /* made it a bit wider */
   text-align: center;
   box-sizing: border-box;
 }
 
 .setup-box h2 {
-  margin-bottom: 1rem;
-  color: #333;
-  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #03045E;
+  font-size: 2rem;
 }
 
 .setup-message {
@@ -49,30 +49,36 @@ select {
 .setup-input:focus,
 select:focus {
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  border-color: #046BF1;
+  box-shadow: 0 0 0 2px rgba(3, 4, 94, 0.2); /* updated to match theme color */
 }
 
 .setup-button {
   width: 100%;
-  background-color: #4caf50;
+  background-color: #03045E;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   transition: background-color 0.3s;
   font-size: 16px;
+  font-weight: 700;
 }
 
 .setup-button:hover {
-  background-color: #45a049;
+  background-color: #046BF1;
 }
 
 @media (max-width: 480px) {
+  .setup-box {
+    padding: 2rem;
+    max-width: 90%; /* fit better on small screens */
+  }
+
   .setup-box h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 
   .setup-button {

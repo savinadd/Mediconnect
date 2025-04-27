@@ -74,7 +74,7 @@ export default function BookAppointment() {
         title: `Dr. ${a.doctor_name}`,
         start: new Date(a.start_time),
         end: new Date(a.end_time),
-        color: '#0d6efd',
+        color: '#046BF1',
       }))
 
       const myEvents = mine.map(r => {

@@ -66,12 +66,12 @@
 }
 
 .confirm-buttons button.yes {
-  background-color: #0d6efd;
+  background-color: #03045E;
   color: #fff;
 }
 
 .confirm-buttons button.yes:hover {
-  background-color: #0b5ed7;
+  background-color: #046BF1;
 }
 
 .confirm-buttons button.no {

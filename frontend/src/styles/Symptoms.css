@@ -10,7 +10,7 @@
 .symptoms-container h1 {
   font-size: 2rem;
   font-weight: 800;
-  color: #1f2937;
+  color: #03045E;
   margin-bottom: 8px;
 }
 
@@ -52,7 +52,7 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #046BF1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
 }
 
@@ -62,7 +62,7 @@ textarea {
 }
 
 .submit-button {
-  background: linear-gradient(to right, #4f46e5, #6366f1);
+  background-color: #03045E;
   color: white;
   padding: 12px;
   border: none;
@@ -75,7 +75,7 @@ textarea {
 }
 
 .submit-button:hover {
-  background: #4338ca;
+  background: #046BF1;
   transform: translateY(-1px);
 }
 

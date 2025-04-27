@@ -17,7 +17,7 @@
 .chat-container h2 {
   text-align: center;
   font-size: 2.2rem;
-  color: #2d2d2d;
+  color: #03045E;
   font-weight: 700;
   margin-bottom: 0.5rem;
   animation: fadeSlideDown 0.6s ease-in-out;
@@ -42,13 +42,13 @@
 }
 
 .chat-select-wrapper select:focus {
-  border-color: #4f8ef7;
+  border-color: #046BF1;
   outline: none;
   box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.3);
 }
 
 .chat-select-wrapper select:hover {
-  border-color: #4f8ef7;
+  border-color: #046BF1;
   cursor: pointer;
 }
 
@@ -126,7 +126,7 @@
 }
 
 .chat-input:focus {
-  border-color: #4f8ef7;
+  border-color: #046BF1;
   outline: none;
   box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.3);
 }

@@ -15,13 +15,22 @@ export default function Navbar() {
     setMenuOpen(false);
   };
 
+  const handleLogoClick = () => {
+    if (isLoggedIn && (role === 'patient' || role === 'doctor' || role === 'admin')) {
+      navigate('/profile');
+    } else {
+      navigate('/');
+    }
+    setMenuOpen(false);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo" onClick={() => setMenuOpen(false)}>
+        <div className="navbar-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
           <img src={logo} alt="MediConnect Logo" className="logo-img" />
           <span>MediConnect</span>
-        </Link>
+        </div>
         <button
           className="menu-toggle"
           onClick={() => setMenuOpen(o => !o)}
@@ -41,7 +50,9 @@ export default function Navbar() {
                       </Link>
                     </li>
                     <li>
-                      <Link to="/appointments/book">Book Appointment</Link>
+                      <Link to="/appointments/book" onClick={() => setMenuOpen(false)}>
+                        Book Appointment
+                      </Link>
                     </li>
                     <li>
                       <Link to="/chat" onClick={() => setMenuOpen(false)}>
@@ -53,7 +64,9 @@ export default function Navbar() {
                 {role === 'doctor' && (
                   <>
                     <li>
-                      <Link to="/appointments/schedule">My Schedule</Link>
+                      <Link to="/appointments/schedule" onClick={() => setMenuOpen(false)}>
+                        My Schedule
+                      </Link>
                     </li>
                     <li>
                       <Link to="/doctor-chat" onClick={() => setMenuOpen(false)}>

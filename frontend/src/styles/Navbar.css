@@ -74,7 +74,7 @@
 
 .nav-links li a {
   text-decoration: none;
-  color: #31294A;
+  color: #03045E;
   font-size: 16px;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -84,16 +84,14 @@
 }
 
 .nav-links li a:hover {
-  background-color: #94c6ee;
-  color: #000a0d; 
+  background-color: #046BF1;
+  color: white; 
 }
 
 .logout-btn {
   background-color: transparent;
-  color: #00678a;
-  border: 2px solid #94c6ee;
-  border-radius: 20px;
-  padding: 8px 12px;
+  color: #03045E;
+  border: 0px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -102,8 +100,13 @@
 }
 
 .logout-btn:hover {
-  background-color: #94c6ee;
-  color: #31294a;
+  background-color: #ab2525;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  line-height: 1;
 }
 
 

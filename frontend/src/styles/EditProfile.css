@@ -11,7 +11,7 @@
   text-align: center;
   font-size: 2.25rem;
   margin-bottom: 2rem;
-  color: #1f2937;
+  color: #03045E;
   font-weight: 700;
   animation: fadeSlideDown 0.5s ease-in-out;
 }
@@ -38,15 +38,15 @@
 .form-section h3 {
   margin-bottom: 16px;
   font-size: 20px;
-  color: #111827;
-  border-left: 4px solid #6c63ff;
+  color: #03045E;
+  border-left: 4px solid #046BF1;
   padding-left: 12px;
 }
 
 label {
   margin-top: 12px;
   font-size: 14px;
-  color: #374151;
+  color: #03045E;
   font-weight: 500;
 }
 
@@ -67,7 +67,7 @@ select {
 input:focus,
 select:focus {
   outline: none;
-  border-color: #6c63ff;
+  border-color: #046BF1;
   box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
 }
 
@@ -77,7 +77,7 @@ select:focus {
 }
 
 .save-btn {
-  background: linear-gradient(to right, #6c63ff, #7c72ff);
+  background-color: #03045E;
   color: white;
   padding: 12px 28px;
   border-radius: 999px;
@@ -89,7 +89,7 @@ select:focus {
 }
 
 .save-btn:hover {
-  background: #564fd8;
+  background: #046BF1;
   transform: translateY(-2px);
 }
 
