@@ -91,7 +91,6 @@ const loginUser = async (req, res) => {
       sameSite: isProduction ? 'None' : 'Lax',
       path: '/',
       maxAge: 24 * 60 * 60 * 1000,
-      partitioned: true,
     });
 
     res.json({
@@ -111,7 +110,6 @@ const logoutUser = (req, res) => {
     secure: isProduction,
     sameSite: isProduction ? 'None' : 'Lax',
     path: '/',
-    partitioned: true,
   });
   res.json({ message: 'Logout successful' });
 };
