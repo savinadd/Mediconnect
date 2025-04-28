@@ -1,4 +1,9 @@
-require('dotenv').config({ path: '.env.local' });
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: '.env.local' });
+} else {
+  require('dotenv').config();
+}
+
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
