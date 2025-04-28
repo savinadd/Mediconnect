@@ -4,10 +4,10 @@ const { z } = require('zod');
 const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const nameRegex = /^[A-Za-z'-]+$/;
 const phoneRegex = /^\d+$/;
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;  // YYYY-MM-DD
+const dateRegex = /^\d{4}-\d{2}-\d{2}$/; 
 const idRegex = /^[A-Za-z0-9-]+$/;
-const numericRegex = /^\d+(?:\.\d+)?$/;  // integer or decimal
-const allergyRegex = /^[A-Za-z ,]+$/;
+const numericRegex = /^\d+(?:\.\d+)?$/;  
+const allergyRegex = /^[A-Za-z0-9\/, ]+$/;
 const specializationRegex = /^[A-Za-z &]+$/;
 const licenseRegex = /^[A-Za-z0-9-]+$/;
 
