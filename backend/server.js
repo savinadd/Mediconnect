@@ -29,7 +29,7 @@ const io = socketIo(server, {
     credentials: true,
   },
 });
-
+logger.info(FRONTEND_URL);
 io.on('connection', socket => {
   logger.info('User connected: ' + socket.id);
 
