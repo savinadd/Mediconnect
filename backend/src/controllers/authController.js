@@ -2,8 +2,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { BadRequestError, InternalServerError, AppError } = require('../utils/errors');
+const logger = require('../utils/logger.js');
 
 const isProduction = process.env.NODE_ENV === 'production';
+logger.info(isProduction);
 
 const registerUser = async (req, res) => {
   const { email, password, role } = req.body;
@@ -95,8 +97,8 @@ const loginUser = async (req, res) => {
       user: { id: user.id, role: user.role },
     });
   } catch (err) {
+    logger.error(err);
     if (err instanceof AppError) throw err;
-    console.error(err);
     throw new InternalServerError('Internal server error upon logging in');
   }
 };
@@ -114,6 +116,7 @@ const logoutUser = (req, res) => {
 const getRegistrationRole = (req, res) => {
   const token = req.cookies?.token;
   if (!token) {
+    logger.error('Registration token missing');
     throw new BadRequestError('Registration token missing');
   }
   try {
