@@ -116,6 +116,7 @@ const AdminDashboard = () => {
 
   if (loading) return <div>Loading...</div>;
   return (
+    <div className='admin-container'>
     <div className="admin-dashboard">
       <h1>Admin Dashboard</h1>
 
@@ -235,6 +236,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

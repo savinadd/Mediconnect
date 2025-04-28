@@ -181,11 +181,6 @@ const Profile = () => {
           </ul>
         </div>
       </div>
-
-      <footer className="profile-footer">
-        <p>© 2025 MediConnect. All rights reserved.</p>
-
-      </footer>
     </div>
   );
 };

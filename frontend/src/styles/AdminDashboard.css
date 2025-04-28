@@ -1,5 +1,8 @@
+.admin-container{
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='2500' height='2000' preserveAspectRatio='none' viewBox='0 0 2500 2000'%3e%3cg mask='url(%26quot%3b%23SvgjsMask2144%26quot%3b)' fill='none'%3e%3crect width='2500' height='2000' x='0' y='0' fill='url(%26quot%3b%23SvgjsRadialGradient2145%26quot%3b)'%3e%3c/rect%3e%3cpath d='M57 2000L2057 0L3984.5 0L1984.5 2000z' fill='url(%26quot%3b%23SvgjsLinearGradient2146%26quot%3b)'%3e%3c/path%3e%3cpath d='M2276 2000L276 0L-1710 0L290 2000z' fill='url(%26quot%3b%23SvgjsLinearGradient2147%26quot%3b)'%3e%3c/path%3e%3cpath d='M603.6266614417243 2000L2500 103.62666144172431L2500 2000z' fill='url(%26quot%3b%23SvgjsLinearGradient2146%26quot%3b)'%3e%3c/path%3e%3cpath d='M0 2000L1896.3733385582757 2000L 0 103.62666144172431z' fill='url(%26quot%3b%23SvgjsLinearGradient2147%26quot%3b)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask2144'%3e%3crect width='2500' height='2000' fill='white'%3e%3c/rect%3e%3c/mask%3e%3cradialGradient cx='100%25' cy='100%25' r='3201.56' gradientUnits='userSpaceOnUse' id='SvgjsRadialGradient2145'%3e%3cstop stop-color='rgba(195%2c 199%2c 230%2c 1)' offset='0.2'%3e%3c/stop%3e%3cstop stop-color='rgba(237%2c 250%2c 253%2c 1)' offset='1'%3e%3c/stop%3e%3c/radialGradient%3e%3clinearGradient x1='0%25' y1='100%25' x2='100%25' y2='0%25' id='SvgjsLinearGradient2146'%3e%3cstop stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3clinearGradient x1='100%25' y1='100%25' x2='0%25' y2='0%25' id='SvgjsLinearGradient2147'%3e%3cstop stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+}
 .admin-dashboard {
-  padding: 40px 2rem;
+  padding: 90px 2rem;
   max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -26,13 +29,13 @@
 .summary-card h3 {
   margin-bottom: 10px;
   font-size: 18px;
-  color: #444;
+  color: #03045E;
 }
 
 .summary-card p {
   font-size: 24px;
   font-weight: bold;
-  color: #060075;
+  color: #03045E;
 }
 
 .user-table {
@@ -54,13 +57,13 @@
 }
 
 .user-table th {
-  background-color: #060075;
+  background-color: #03045E;
   color: #fff;
   font-size: 16px;
 }
 
 .user-table tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: #cedef4;
   cursor: pointer;
 }
 
@@ -198,7 +201,7 @@
 .confirmation-modal h3 {
   margin-bottom: 20px;
   font-size: 18px;
-  color: #060075;
+  color: #03045E;
 }
 
 .confirmation-modal-buttons {
@@ -255,13 +258,13 @@
 .summary-card h3 {
   margin-bottom: 10px;
   font-size: 18px;
-  color: #444;
+  color: #03045E;
 }
 
 .summary-card p {
   font-size: 24px;
   font-weight: bold;
-  color: #060075;
+  color: #046BF1;
 }
 
 .summary-card:last-child {
