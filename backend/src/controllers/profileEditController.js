@@ -66,29 +66,19 @@ const editUserProfile = async (req, res) => {
       );
     } else if (role === 'doctor') {
       const { first_name, last_name, phone, address, specialization, license_number } = parsed;
-      const [first_name_split, ...rest] = first_name.split(' ');
-      const last_name_combined = rest.join(' ');
 
       await db.query(
         `
-        UPDATE doctors SET 
-          first_name = $1, 
-          last_name = $2, 
-          phone = $3, 
-          address = $4, 
-          specialization = $5, 
-          license_number = $6 
-        WHERE user_id = $7
-      `,
-        [
-          first_name_split,
-          last_name_combined,
-          phone,
-          address,
-          specialization,
-          license_number,
-          userId,
-        ]
+  UPDATE doctors SET
+    first_name      = $1,
+    last_name       = $2,
+    phone           = $3,
+    address         = $4,
+    specialization  = $5,
+    license_number  = $6
+  WHERE user_id = $7
+`,
+        [first_name, last_name, phone, address, specialization, license_number, userId]
       );
     } else if (role === 'admin') {
       const { first_name, last_name, phone, email } = parsed;
