@@ -291,8 +291,7 @@ const Prescriptions = () => {
             ))
           ) : (
             <p className="no-prescriptions">
-              No active prescriptions found. Once a doctor writes you a prescription, you will see
-              it here.
+              No active prescriptions found.
             </p>
           )}
         </div>
