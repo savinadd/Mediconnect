@@ -63,6 +63,7 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
+  logger.info(isProduction);
   const { email, password } = req.body;
   if (!email || !password) {
     throw new BadRequestError('All fields are required');
