@@ -77,6 +77,7 @@ const EditProfile = () => {
         navigate('/profile');
       } else {
         setErrors(data.errors || [{ msg: data.message }]);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (err) {
       setErrors([{ msg: 'Server error, please try again.' }]);

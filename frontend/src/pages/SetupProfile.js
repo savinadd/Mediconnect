@@ -69,6 +69,7 @@ const SetupProfile = () => {
         await refreshUser();
         navigate('/profile');
       } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         setError(data.message || 'Failed to save profile');
       }
     } catch (err) {

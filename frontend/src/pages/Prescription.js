@@ -3,6 +3,8 @@ import toast from 'react-hot-toast';
 import '../styles/Prescription.css';
 import { AuthContext } from '../context/AuthContext';
 
+const nameRegex = /^[A-Za-z'-]+$/;
+
 const Prescriptions = () => {
   const { userId, userRole: role, isLoggedIn } = useContext(AuthContext);
 
@@ -183,13 +185,15 @@ const Prescriptions = () => {
           <div className="prescription-form">
             <h2>Prescribe Medication</h2>
             <form onSubmit={handlePrescribe}>
-              <input
-                type="text"
-                name="patientName"
-                placeholder="Patient Full Name"
-                value={formData.patientName}
-                onChange={handleChange}
-                required
+            <input
+              type="text"
+              name="patientName"
+              placeholder="Patient Full Name"
+              value={formData.patientName}
+              onChange={handleChange}
+              required
+              pattern={nameRegex.source}
+              title="Name may only contain letters, apostrophes, and hyphens"
               />
               <input
                 type="date"
