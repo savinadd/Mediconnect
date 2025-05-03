@@ -384,5 +384,12 @@ To get this project up and running, you will need the following:
 
 - Node.js (version >= 14.x)
 - PostgreSQL instance for the database
-- npm or yarn for managing dependencies
+- npm for managing dependencies
+
+### Running Locally
+
+To run the MediConnect application locally, clone this repository. 
+Then, run `npm install` to install all of the necessary packages, first in the backend folder and then in the frontend folder. 
+Afterwords, the project may be started using the `npm start` command, once again starting in the backend folder and then the frontend.
+Tests can be run using `npm run tests` and `npm run tests:integration`.
 
